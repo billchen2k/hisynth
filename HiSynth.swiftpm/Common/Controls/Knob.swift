@@ -15,29 +15,42 @@ struct Knob: View {
 
     var range: ClosedRange<Double> = 0...1
     var size: CGFloat = 80.0
-    
+
+    /// Set if when value = 0, the signal light will be turned gray.
+    var allowPoweroff = true
+
     /// Set the sensitivity of the dragging gesture.
     var sensitivity: Double = 0.3
-    
+
     let startingAngle: Angle = .radians(.pi / 6)
-    
+
     var normalizedValue: Double {
         Double((value - range.lowerBound) / (range.upperBound - range.lowerBound))
     }
-    
+
     var body: some View {
-        ZStack{
+        return ZStack{
             Circle()
-                .shadow(color: Color(hex: 0x000000, alpha: 0.5), radius: 10, x: 0, y: 5)
+                .shadow(color: Color(hex: 0x000000, alpha: 0.5), radius: 10.0, x: 0, y: 5)
                 .foregroundStyle(Theme.gradientKnob.shadow(.inner(color: .white.opacity(0.5), radius: 8, x: 1, y: 5)))
                 .frame(width: size, height: size)
-            Circle()
-                .fill(Theme.colorHighlight)
-                .shadow(color: Theme.colorHighlight, radius: 10.0)
-                .frame(width: size / 12, height: size / 12.0)
-                .offset(y: size / 2.0 * 0.7)
-                .rotationEffect(startingAngle)
-                .rotationEffect((.radians(2 * .pi) - startingAngle * 2) * normalizedValue)
+            if allowPoweroff && normalizedValue == 0.0 {
+                Circle()
+                    .fill(Theme.colorGray4)
+                    .frame(width: size / 12, height: size / 12.0)
+                    .offset(y: size / 2.0 * 0.7)
+                    .rotationEffect(startingAngle)
+                    .rotationEffect((.radians(2 * .pi) - startingAngle * 2) * normalizedValue)
+            } else {
+                Circle()
+                    .fill(Theme.colorHighlight)
+                    .shadow(color: Theme.colorHighlight, radius: 5.0)
+                    .shadow(color: Theme.colorHighlight, radius: 10.0)
+                    .frame(width: size / 12, height: size / 12.0)
+                    .offset(y: size / 2.0 * 0.7)
+                    .rotationEffect(startingAngle)
+                    .rotationEffect((.radians(2 * .pi) - startingAngle * 2) * normalizedValue)
+            }
         }.gesture(DragGesture(minimumDistance: 0)
             .onChanged { value in
                 updateValue(from: value)
@@ -47,7 +60,7 @@ struct Knob: View {
             }
         )
     }
-    
+
     private func updateValue(from value: DragGesture.Value) {
         if !isDragging {
             oldValue = self.value
@@ -75,3 +88,4 @@ struct KnobPreviewProvider: PreviewProvider {
         KnobPreviewContainer()
     }
 }
+

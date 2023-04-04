@@ -35,13 +35,15 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(url: "https://github.com/AudioKit/Keyboard", "1.0.0"..<"2.0.0")
+        .package(url: "https://github.com/AudioKit/Keyboard", "1.0.0"..<"2.0.0"),
+        .package(url: "https://github.com/AudioKit/SoundpipeAudioKit", "5.0.0"..<"6.0.0")
     ],
     targets: [
         .executableTarget(
             name: "AppModule",
             dependencies: [
-                .product(name: "Keyboard", package: "keyboard")
+                .product(name: "Keyboard", package: "keyboard"),
+                .product(name: "SoundpipeAudioKit", package: "soundpipeaudiokit")
             ],
             path: ".",
             resources: [

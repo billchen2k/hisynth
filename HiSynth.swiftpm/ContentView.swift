@@ -3,6 +3,8 @@ import AVFoundation
 import Keyboard
 
 struct ContentView: View {
+
+    @StateObject var core = HiSynthCore()
     
     var body: some View {
         GeometryReader { geometry in
@@ -16,8 +18,6 @@ struct ContentView: View {
                             .font(.custom("Michroma", size: 24.0))
                         Spacer()
                     }.foregroundColor(.white)
-                   
-                   
                     Spacer()
                 }
                 HStack{
@@ -26,9 +26,7 @@ struct ContentView: View {
                  .background(Color(hex: 0x333333))
                  .border(.black, width: 2)
                 VStack {
-                    Keyboard(layout: KeyboardLayout.piano(pitchRange: Pitch(12)...Pitch(36))) { (pitch, on) in
-                        KeyboardKey(pitch: pitch, isActivated: on, pressedColor: Color(hex: 0x4fbcd4), flatTop: true)
-                    }
+                   KeyboardView(core: core)
                 }
             }.background(LinearGradient(gradient: Gradient(colors: [Color(hex: 0x4a4a4a), Color(hex: 0x000000)]),
                                         startPoint: .top, endPoint: .bottom))
