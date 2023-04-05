@@ -1,5 +1,5 @@
 //
-//  Knob.swift
+//  HSKnob.swift
 //
 //
 //  Created by Bill Chen on 2023/4/4.
@@ -8,24 +8,24 @@
 import Foundation
 import SwiftUI
 
-struct Knob: View {
-    @Binding var value: Double
+struct HSKnob: View {
+    @Binding var value: Float
     @State var isDragging = false
-    @State var oldValue: Double = 0
+    @State var oldValue: Float = 0
 
-    var range: ClosedRange<Double> = 0...1
+    var range: ClosedRange<Float> = 0...1
     var size: CGFloat = 80.0
 
     /// Set if when value = 0, the signal light will be turned gray.
     var allowPoweroff = true
 
     /// Set the sensitivity of the dragging gesture.
-    var sensitivity: Double = 0.3
+    var sensitivity: Float = 0.3
 
     let startingAngle: Angle = .radians(.pi / 6)
 
-    var normalizedValue: Double {
-        Double((value - range.lowerBound) / (range.upperBound - range.lowerBound))
+    var normalizedValue: Float {
+        Float((value - range.lowerBound) / (range.upperBound - range.lowerBound))
     }
 
     var body: some View {
@@ -40,7 +40,7 @@ struct Knob: View {
                     .frame(width: size / 12, height: size / 12.0)
                     .offset(y: size / 2.0 * 0.7)
                     .rotationEffect(startingAngle)
-                    .rotationEffect((.radians(2 * .pi) - startingAngle * 2) * normalizedValue)
+                    .rotationEffect((.radians(2 * .pi) - startingAngle * 2) * Double(normalizedValue))
             } else {
                 Circle()
                     .fill(Theme.colorHighlight)
@@ -49,7 +49,7 @@ struct Knob: View {
                     .frame(width: size / 12, height: size / 12.0)
                     .offset(y: size / 2.0 * 0.7)
                     .rotationEffect(startingAngle)
-                    .rotationEffect((.radians(2 * .pi) - startingAngle * 2) * normalizedValue)
+                    .rotationEffect((.radians(2 * .pi) - startingAngle * 2) * Double(normalizedValue))
             }
         }.gesture(DragGesture(minimumDistance: 0)
             .onChanged { value in
@@ -68,24 +68,24 @@ struct Knob: View {
         }
         let x = value.translation.width
         let y = -value.translation.height
-        var offset = 0.0
-        offset += x / size * (range.upperBound - range.lowerBound) * sensitivity
-        offset += y / size * (range.upperBound - range.lowerBound) * sensitivity
+        var offset: Float = 0.0
+        offset += Float(x / size) * (range.upperBound - range.lowerBound) * sensitivity
+        offset += Float(y / size) * (range.upperBound - range.lowerBound) * sensitivity
         self.value = max(range.lowerBound, min(range.upperBound, self.oldValue + offset))
     }
 }
 
 
-struct KnobPreviewContainer: View {
-    @State var value: Double = 0.5
+struct HSKnob_Container: View {
+    @State var value: Float = 0.5
     var body: some View {
-        Knob(value: $value)
+        HSKnob(value: $value)
     }
 }
 
-struct KnobPreviewProvider: PreviewProvider {
+struct HSKnob_Previews: PreviewProvider {
     static var previews: some View {
-        KnobPreviewContainer()
+        HSKnob_Container()
     }
 }
 

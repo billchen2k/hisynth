@@ -9,6 +9,8 @@ import Foundation
 import SwiftUI
 
 extension Color {
+
+    /// Initiate SwiftUI colors with hex code.
     init(hex: UInt, alpha: Double = 1) {
         self.init(
             .sRGB,

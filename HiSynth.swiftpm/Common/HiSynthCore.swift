@@ -9,6 +9,7 @@ import Foundation
 import AudioKit
 import SoundpipeAudioKit
 import Keyboard
+import SporthAudioKit
 
 enum HSWaveform {
     case sine
@@ -39,6 +40,28 @@ enum HSWaveform {
             return Table(pulseWave())
         }
     }
+
+    func getSymbolImageName() -> String {
+        let names: [HSWaveform: String] = [
+            .sine: "wave-sine",
+            .square: "wave-square",
+            .saw: "wave-saw",
+            .triangle: "wave-triangle",
+            .pulse: "wave-pulse"
+        ]
+        return names[self]!
+    }
+
+    func getReadableName() -> String {
+        let names: [HSWaveform: String] = [
+            .sine: "Sine",
+            .square: "Square",
+            .saw: "Saw",
+            .triangle: "Triangle",
+            .pulse: "Pulse"
+        ]
+        return names[self]!
+    }
 }
 
 class OscillatorController: ObservableObject {
@@ -47,9 +70,11 @@ class OscillatorController: ObservableObject {
 
     var mixer = Mixer()
     var oscPool: [DynamicOscillator] = []
+    var envPool: [AmplitudeEnvelope] = []
+    var generators: [OperationEffect] = []
     var oscCount = 8
 
-    /// MIDINotenumber -> oscNumber or -1 for not plaing. Used for voice allocation
+    /// MIDINotenumber -> oscNumber or nil for not playing. Used for voice allocation
     var allocated: [Int8: Int] = [:]
 
     /// MIDINoteNumber stack for tracking voice stealing
@@ -64,18 +89,38 @@ class OscillatorController: ObservableObject {
             osc.setWaveform(waveform.getTable())
             osc.amplitude = 0.0
             osc.start()
+            let env = AmplitudeEnvelope(osc)
+            env.attackDuration = 0.5
+            env.releaseDuration = 0.5
+            env.start()
             oscPool.append(osc)
-            mixer.addInput(osc)
+            envPool.append(env)
+
+
+            // AM LFO
+            let lfo = OperationEffect(env) { osc, parameters in
+                parameters.forEach{ print($0.description) }
+                let oscillator = Operation.sineWave(frequency: 1.5).scale(minimum: 0, maximum: 1)
+
+                let amped = osc
+                return amped.lowPassFilter(halfPowerPoint: oscillator * parameters[0])
+            }
+            generators.append(lfo)
+
+            lfo.parameter1 = 5000
+
+            mixer.addInput(lfo)
         }
     }
 
     func noteOn(_ pitch: Pitch) {
-        print(voices)
         // Find the first not playing osc for voice allocation
-        let oscIndex = oscPool.firstIndex { $0.$amplitude.value == 0.0 }
+        let oscIndex = (0..<oscCount).first{ !Set(allocated.values).contains($0) }
         if let oscIndex = oscIndex {
             let osc = oscPool[oscIndex]
             osc.frequency = AUValue(pitch.midiNoteNumber).midiNoteToFrequency()
+            generators[oscIndex].start()
+            envPool[oscIndex].openGate()
             osc.amplitude = level
             allocated[pitch.midiNoteNumber] = oscIndex
             voices.append(pitch.midiNoteNumber)
@@ -87,9 +132,10 @@ class OscillatorController: ObservableObject {
                     print("Error: Voice stealing error, can not find the oscillator to stop. toStealNote: \(toStealNote).")
                     return
                 }
-                print("Info: Stealing note \(toStealNote)")
+                print("Info: Maximum polyphony reached. Stealing note \(toStealNote).")
                 oscPool[toStealOscIndex].frequency = AUValue(pitch.midiNoteNumber).midiNoteToFrequency()
                 allocated[toStealNote] = toStealOscIndex
+                envPool[toStealOscIndex].openGate()
                 voices.removeFirst()
                 voices.append(pitch.midiNoteNumber)
             } else {
@@ -101,8 +147,14 @@ class OscillatorController: ObservableObject {
     func noteOff(_ pitch: Pitch) {
         let oscIndex = allocated[pitch.midiNoteNumber]
         if let oscIndex = oscIndex {
-            oscPool[oscIndex].amplitude = 0.0
-            allocated[pitch.midiNoteNumber] = nil
+            //            oscPool[oscIndex].amplitude = 0.0
+            generators[oscIndex].stop()
+            envPool[oscIndex].closeGate()
+            // Asynchrolly set to nil after 0.5 seconds
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5 + 0.1) {
+                self.allocated[pitch.midiNoteNumber] = nil
+            }
+//          allocated[pitch.midiNoteNumber] = nil
         } else {
             print("Warning: noteOff called on a note that is not playing.")
         }

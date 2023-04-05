@@ -5,6 +5,10 @@ import Keyboard
 struct ContentView: View {
 
     @StateObject var core = HiSynthCore()
+
+    init() {
+        Fonts.registerAllFonts()
+    }
     
     var body: some View {
         GeometryReader { geometry in
@@ -13,9 +17,9 @@ struct ContentView: View {
                     HStack(alignment: .bottom) {
                         Spacer()
                         Text("Welcome to")
-                            .font(.title)
+                            .modifier(HSFont(.title1))
                         Text("HiSynth")
-                            .font(.custom("Michroma", size: 24.0))
+                            .modifier(HSFont(.artTitle1))
                         Spacer()
                     }.foregroundColor(.white)
                     Spacer()

@@ -46,6 +46,15 @@
       }
     },
     {
+      "identity" : "sporthaudiokit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/AudioKit/SporthAudioKit",
+      "state" : {
+        "revision" : "638c95036430ce23ba2810101de319ed31f481bb",
+        "version" : "5.5.1"
+      }
+    },
+    {
       "identity" : "tonic",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/AudioKit/Tonic.git",
