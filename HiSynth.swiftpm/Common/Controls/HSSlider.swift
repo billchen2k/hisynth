@@ -13,11 +13,11 @@ struct HSSlider: View {
     @Binding var value: Float
     @State var isDragging = false
     @State var oldValue: Float = 0.0
-    
+
     var range: ClosedRange<Float> = 1.0...100.0
 
-    /// Number of steps within the range.
-    var steps: Int = 100
+    /// Step size of the range.
+    var stepSize: Float = 0.01
 
     var width: CGFloat = 45.0
     var height: CGFloat = 180.0
@@ -28,12 +28,14 @@ struct HSSlider: View {
     /// Set the sensitivity of the dragging gesture.
     var sensitivity: Float = 1.0
 
+    var onChanged: ((Float) -> Void)?
+
     var normalizedValue: Float {
         (value - range.lowerBound) / (range.upperBound - range.lowerBound)
     }
 
-    var stepSize: Float {
-        (range.upperBound - range.lowerBound) / Float(steps - 1)
+    var steps: Int {
+        Int((range.upperBound - range.lowerBound) / stepSize) + 1
     }
 
     var body: some View {
@@ -96,7 +98,11 @@ struct HSSlider: View {
         var offset: Float = 0.0
         offset = Float(y / height) * (range.upperBound - range.lowerBound) * sensitivity
         let UnsteppedValue = max(range.lowerBound, min(range.upperBound, self.oldValue + offset))
-        self.value = (UnsteppedValue / stepSize).rounded() * stepSize
+        let steppedValue = (UnsteppedValue / stepSize).rounded() * stepSize
+        self.value = steppedValue
+        if oldValue != steppedValue {
+            self.onChanged?(steppedValue)
+        }
     }
 }
 

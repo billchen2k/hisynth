@@ -14,6 +14,7 @@ class OscillatorController: ObservableObject, HasKeyHandlar {
 
     @Published var waveform1: HSWaveform = .sine {
         didSet {
+            print("Set osc1 waveform to \(waveform1.getReadableName())")
             osc1.waveform = waveform1
         }
     }
@@ -23,26 +24,26 @@ class OscillatorController: ObservableObject, HasKeyHandlar {
         }
     }
 
-    @Published var level1: AUValue = 0.75 {
+    @Published var level1: Float = 0.75 {
         didSet {
             osc1.level = level1
         }
     }
 
-    @Published var level2: AUValue = 0.75 {
+    @Published var level2: Float = 0.75 {
         didSet {
             osc2.level = level2
         }
     }
 
-    @Published var pitch1: Int8 = 0 {
+    @Published var pitch1: Float = 0 {
         didSet {
-            osc1.pitchOffset = pitch1
+            osc1.pitchOffset = Int8(pitch1)
         }
     }
-    @Published var pitch2: Int8 = 0 {
+    @Published var pitch2: Float = 0 {
         didSet {
-            osc2.pitchOffset = pitch2
+            osc2.pitchOffset = Int8(pitch2)
         }
     }
 

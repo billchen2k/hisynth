@@ -21,14 +21,14 @@ struct ControlPanelContainer<Content: View>: View {
         VStack {
             if !title.isEmpty {
                 HStack {
-                    Text(title).modifier(HSFont(.artTitle2)).padding(.bottom, 2.0)
+                    Text(title).modifier(HSFont(.artTitle2)).padding(.vertical, 2.0)
                     Spacer()
                 }
-
             }
             content()
         }
-        .padding(.all, 10.0)
+        .padding(.horizontal, 8.0)
+        .padding(.bottom, 2.0)
         .background(Theme.colorGray2)
         .border(.black, width: 1.0)
         .cornerRadius(4.0)
