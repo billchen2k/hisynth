@@ -11,14 +11,16 @@ import SwiftUI
 struct ScreenBox<Content: View>: View {
 
     var isOn: Bool = true
+    var blankStyle: Bool = false
     var width: CGFloat = 200.0
     var height: CGFloat = 200.0
 
     var content: () -> Content?
 
-    init(isOn: Bool, width: CGFloat = 200.0, height: CGFloat = 200.0,
+    init(isOn: Bool, blankStyle: Bool = false, width: CGFloat = 200.0, height: CGFloat = 200.0,
          @ViewBuilder content: @escaping () -> Content? = { nil }) {
         self.isOn = isOn
+        self.blankStyle = blankStyle
         self.width = width
         self.height = height
         self.content = content
@@ -28,7 +30,7 @@ struct ScreenBox<Content: View>: View {
         ZStack {
             Rectangle()
                 .fill(isOn ? Theme.gradientLightScreen(max(width, height)) :
-                        Theme.gradientDarkScreen(max(width, height)))
+                        (blankStyle ? Theme.gradientBlankScreen(): Theme.gradientDarkScreen(max(width, height))))
                 .border(.black, width: 1.0)
                 .frame(width: width, height: height)
             content()

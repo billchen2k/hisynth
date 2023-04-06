@@ -42,6 +42,10 @@ struct Theme {
         return RadialGradient(colors: [Color(hex: 0x333333), Color(hex: 0x000000)], center: .top, startRadius: 0, endRadius: radius)
     }
 
+    static func gradientBlankScreen() -> RadialGradient {
+        return RadialGradient(colors: [Theme.colorGray2], center: .top, startRadius: 0, endRadius: 1)
+    }
+
     /// Linear gradient used for art titles.
     static func gradientArtTitle() -> LinearGradient {
         return LinearGradient(colors: [Color(hex: 0xffffff), Color(hex: 0xffffff, alpha: 0.5)], startPoint: .top, endPoint: .bottom)

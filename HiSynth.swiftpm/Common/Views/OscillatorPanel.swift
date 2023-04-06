@@ -12,6 +12,8 @@ struct OscillatorPanel: View {
 
     @State var waveform: Float = 5.0
 
+    weak var controller: OscillatorController?
+
     let waveforms: [HSWaveform] = [.sine, .saw, .square, .triangle, .pulse]
 
     var body: some View {
@@ -21,17 +23,18 @@ struct OscillatorPanel: View {
                 VStack {
                     GeometryReader { geo in
                         HStack(spacing: 15) {
-                            HSSlider(value: $waveform, range: 1...5, steps: 5, height: geo.size.height)
+                            HSSlider(value: $waveform, range: 1...5, steps: 5, height: geo.size.height, allowPoweroff: false)
                             VStack(alignment: .leading) {
                                 ForEach(0..<waveforms.count, id: \.self) { i in
                                     HStack {
-                                        ScreenBox(isOn: false, width: 40, height: 24) {
+                                        ScreenBox(isOn: Int(waveform) == 5 - i, blankStyle: true,
+                                                  width: 40, height: 22) {
                                             Image(waveforms[i].getSymbolImageName())
                                                 .resizable()
                                                 .aspectRatio(contentMode: .fit)
-                                                .frame(width: 30)
+                                                .frame(width: 28)
                                         }
-                                        Text(waveforms[i].getReadableName())
+                                        Text(waveforms[i].getReadableName().uppercased())
                                             .modifier(HSFont(.body1))
                                     }
                                     if (i < waveforms.count - 1) {
@@ -43,6 +46,8 @@ struct OscillatorPanel: View {
                     }
                     Text("OSC 1 Waveform").modifier(HSFont(.body1))
                 }
+                VStack {
+                }
             }
         }
     }
@@ -50,7 +55,7 @@ struct OscillatorPanel: View {
 
 struct OscillatorPanel_Previews: PreviewProvider {
     static var previews: some View {
-        OscillatorPanel().frame(width: 500, height: 200)
+        OscillatorPanel().frame(width: 500, height: 220)
     }
 }
 
