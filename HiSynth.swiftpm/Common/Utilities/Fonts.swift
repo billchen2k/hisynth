@@ -118,3 +118,11 @@ struct HSFont_Previews: PreviewProvider {
 
     }
 }
+
+/// To allow nodes to be gated
+public protocol Gated {
+    /// Start the gate
+    func openGate()
+    /// Stop the gate
+    func closeGate()
+}

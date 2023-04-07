@@ -7,8 +7,6 @@
 
 import Foundation
 
-
-
 class Filters {
     var inputNode: Node
     var outputNode: Mixer = Mixer()

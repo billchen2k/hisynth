@@ -12,12 +12,14 @@ class OscillatorController: ObservableObject, HasKeyHandlar {
 
     @Published var waveform1: HSWaveform = .sine {
         didSet {
+            if osc1.waveform == waveform1 { return }
             print("Set osc1 waveform to \(waveform1.getReadableName())")
             osc1.waveform = waveform1
         }
     }
     @Published var waveform2: HSWaveform = .sine {
         didSet {
+            if osc2.waveform == waveform2 { return }
             osc2.waveform = waveform2
         }
     }

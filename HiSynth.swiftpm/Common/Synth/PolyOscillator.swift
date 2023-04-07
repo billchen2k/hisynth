@@ -63,6 +63,8 @@ class PolyOscillator: HasKeyHandlar {
     /// userInteractive qos queue for handling note release tasks.
     var taskQueue = DispatchQueue(label: "io.billc.hisynth.oscillator", qos: .userInteractive)
 
+    var taskLock = NSLock()
+
 //    let timer = DispatchSource.makeTimerSource(queue: DispatchQueue.global())
 //    var phase: Int = 0
 
@@ -98,7 +100,9 @@ class PolyOscillator: HasKeyHandlar {
         // Cancel previous noteOff task for unsetting `allocated`
         if let previousTask = noteTasks[pitch.midiNoteNumber] {
             previousTask.cancel()
-            taskQueue.asyncAfter(deadline: .now() + Double(envPool[0].releaseDuration) + 0.3, execute: previousTask)
+            if let previousIdx = allocated[pitch.midiNoteNumber] {
+                envPool[previousIdx].hardCloseGate()
+            }
         }
 
         var idx = (0..<oscCount).first{ !Set(allocated.values).contains($0) }
@@ -118,6 +122,7 @@ class PolyOscillator: HasKeyHandlar {
             voices.removeFirst()
         }
 
+        print("Info: Playing note \(pitch.midiNoteNumber) on osc \(idx!)")
         // Voice allocation
         oscPool[idx!].frequency = AUValue(pitch.midiNoteNumber + pitchOffset).midiNoteToFrequency()
         envPool[idx!].openGate()
@@ -126,13 +131,14 @@ class PolyOscillator: HasKeyHandlar {
     }
 
     func noteOff(_ pitch: Pitch) {
-        print(allocated)
-        print(voices)
+        print("Info: allocated: ", allocated, "voices: ", voices)
         let idx = allocated[pitch.midiNoteNumber]
         if let idx = idx {
             envPool[idx].closeGate()
             let task = DispatchWorkItem {
+                self.taskLock.lock()
                 self.allocated[pitch.midiNoteNumber] = nil
+                self.taskLock.unlock()
             }
             // Release the oscillator after 0.3 seconds.
             taskQueue.asyncAfter(deadline: .now() + Double(envPool[idx].releaseDuration) + 0.3, execute: task)

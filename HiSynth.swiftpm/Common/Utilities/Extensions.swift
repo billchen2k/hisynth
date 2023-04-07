@@ -26,10 +26,19 @@ extension Color {
     }
 }
 
-/// To allow nodes to be gated
-public protocol Gated {
-    /// Start the gate
-    func openGate()
-    /// Stop the gate
-    func closeGate()
+extension Double {
+
+    /// Round to decimal
+    func round(_ places: Int) -> Double {
+        let divisor = pow(10.0, Double(places))
+        return (self * divisor).rounded() / divisor
+    }
+
+    // 0 - 1 level to -60dB ~ 0dB
+    func levelToDb () -> Double {
+        if self <= 0.001 {
+            return -60
+        }
+        return 20 * log10(self)
+    }
 }

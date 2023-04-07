@@ -28,7 +28,7 @@ struct ControlPanelContainer<Content: View>: View {
             content()
         }
         .padding(.horizontal, 8.0)
-        .padding(.bottom, 2.0)
+        .padding(.bottom, 4.0)
         .background(Theme.colorGray2)
         .border(.black, width: 1.0)
         .cornerRadius(4.0)

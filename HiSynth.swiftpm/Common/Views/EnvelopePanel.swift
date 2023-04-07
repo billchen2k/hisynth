@@ -19,6 +19,9 @@ struct EnvelopePanel: View {
         return scene
     }
 
+    let sliderWidth: CGFloat = 50.0
+    let screenWidth: CGFloat = 300.0
+
     var body: some View {
         ControlPanelContainer(title: "Envelope Generator") {
             HStack {
@@ -28,28 +31,28 @@ struct EnvelopePanel: View {
                         Spacer()
                         Text("Attack").modifier(HSFont(.body2))
                     }
-                }.frame(width: 50)
+                }.frame(width: sliderWidth)
                 GeometryReader { geo in
                     VStack {
                         HSSlider(value: $controller.decayDuration, range: 0.0...2.0, stepSize: 0.005, height: geo.size.height * 0.85, allowPoweroff: false)
                         Spacer()
                         Text("Decay").modifier(HSFont(.body2))
                     }
-                }.frame(width: 50)
+                }.frame(width: sliderWidth)
                 GeometryReader { geo in
                     VStack {
                         HSSlider(value: $controller.sustainLevel, range: 0.0...1.0, stepSize: 0.005, height: geo.size.height * 0.85, allowPoweroff: false)
                         Spacer()
                         Text("Sustain").modifier(HSFont(.body2))
                     }
-                }.frame(width: 50)
+                }.frame(width: sliderWidth)
                 GeometryReader { geo in
                     VStack {
                         HSSlider(value: $controller.releaseDuration, range: 0.0...2.0, stepSize: 0.005, height: geo.size.height * 0.85, allowPoweroff: false)
                         Spacer()
                         Text("Release").modifier(HSFont(.body2))
                     }
-                }.frame(width: 50)
+                }.frame(width: sliderWidth)
                 GeometryReader { geo in
                     VStack {
                         ScreenBox(isOn: false, width: geo.size.width, height: geo.size.height * 0.85) {
@@ -59,10 +62,8 @@ struct EnvelopePanel: View {
                         }
                         Spacer()
                         Text("Envelope Preview").modifier(HSFont(.body2))
-                    }.onAppear {
-//                        scene.size = CGSize(width: geo.size.width, height: geo.size.height * 0.85)
                     }
-                }.frame(width: 300)
+                }.frame(width: screenWidth)
 
 
             }

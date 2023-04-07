@@ -6,59 +6,6 @@
 //
 import AVFoundation
 import Foundation
-
-enum HSWaveform {
-    case sine
-    case square
-    case saw
-    case triangle
-    case pulse
-
-    private func pulseWave(pulseSize: Float = 0.25) -> [Table.Element] {
-        var table = [Table.Element](zeros: 4096)
-        for i in 0..<4096 {
-            table[i] = i < Int(4096.0 * (pulseSize)) ? Float(1): Float(-1)
-        }
-        return table
-    }
-
-    func getTable() -> Table {
-        switch self {
-        case .sine:
-            return Table(.sine)
-        case .square:
-            return Table(.square)
-        case .saw:
-            return Table(.sawtooth)
-        case .triangle:
-            return Table(.triangle)
-        case .pulse:
-            return Table(pulseWave())
-        }
-    }
-
-    func getSymbolImageName() -> String {
-        let names: [HSWaveform: String] = [
-            .sine: "wave-sine",
-            .square: "wave-square",
-            .saw: "wave-saw",
-            .triangle: "wave-triangle",
-            .pulse: "wave-pulse"
-        ]
-        return names[self]!
-    }
-
-    func getReadableName() -> String {
-        let names: [HSWaveform: String] = [
-            .sine: "Sine",
-            .square: "Square",
-            .saw: "Saw",
-            .triangle: "Triangle",
-            .pulse: "Pulse"
-        ]
-        return names[self]!
-    }
-}
 //
 //class OscillatorControllerTest: ObservableObject {
 //    @Published var waveform = HSWaveform.sine
@@ -202,12 +149,12 @@ class HiSynthCore: ObservableObject, HasAudioEngine {
         polyOscillators = [PolyOscillator(), PolyOscillator()]
         let oscilltatorController = OscillatorController(oscs: polyOscillators)
         let envelopeController = EnvelopeController(oscs: polyOscillators)
-        let filterController = FilterController()
+        let filterController = FilterController(envelopeController.outputNode)
 
         self.oscillatorController = oscilltatorController
         self.envelopeController = envelopeController
         self.filterController = filterController
-        engine.output = envelopeController.outputNode
+        engine.output = filterController.outputNode
     }
 
     func noteOn(pitch: Pitch, point: CGPoint) {
@@ -216,7 +163,7 @@ class HiSynthCore: ObservableObject, HasAudioEngine {
     }
 
     func noteOff(pitch: Pitch) {
-        print("Pitch off:", pitch.midiNoteNumber)
+        print("Note off:", pitch.midiNoteNumber)
         oscillatorController.noteOff(pitch)
     }
 
@@ -226,5 +173,7 @@ class HiSynthCore: ObservableObject, HasAudioEngine {
         } catch {
             print("Error: engine start failed.")
         }
+        envelopeController.loadDefaults()
+        filterController.loadDefaults()
     }
 }

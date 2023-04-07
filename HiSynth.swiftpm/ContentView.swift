@@ -20,7 +20,7 @@ struct ContentView: View {
                     LazyHGrid(rows: [GridItem(.adaptive(minimum: 180))]) {
                         OscillatorPanel(controller: core.oscillatorController)
                         EnvelopePanel(controller: core.envelopeController)
-                        OscillatorPanel(controller: core.oscillatorController)
+                        FilterPanel(controller: core.filterController)
                         OscillatorPanel(controller: core.oscillatorController)
                         OscillatorPanel(controller: core.oscillatorController)
                         OscillatorPanel(controller: core.oscillatorController)
@@ -45,8 +45,8 @@ struct ContentView: View {
         }
     }
 }
-
-struct ContentViewPreviewProvider: PreviewProvider {
+/// For preview with iPad Pro (11-inch) in landscape mode.
+struct AppPreviewProvider: PreviewProvider {
     static var previews: some View {
         ContentView()
             .previewInterfaceOrientation(.landscapeRight)

@@ -49,4 +49,11 @@ class EnvelopeController: ObservableObject {
         outputNode.addInput(osc1.outputNode)
         outputNode.addInput(osc2.outputNode)
     }
+
+    public func loadDefaults() {
+        attackDuration = 0.0
+        decayDuration = 0.5
+        sustainLevel = 1.0
+        releaseDuration = 0.1
+    }
 }
