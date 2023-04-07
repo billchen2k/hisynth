@@ -13,14 +13,15 @@ struct FilterPanel: View {
 
     @ObservedObject var controller: FilterController
 
+    let sliderWidth: CGFloat = 60.0
+    let screenWidth: CGFloat = 300.0
+
     var scene: SKScene {
         let scene = FilterScene()
         scene.controller = controller
+        scene.size.width = screenWidth
         return scene
     }
-
-    let sliderWidth: CGFloat = 60.0
-    let screenWidth: CGFloat = 300.0
 
     var body: some View {
         ControlPanelContainer(title: "Filters") {
@@ -44,7 +45,9 @@ struct FilterPanel: View {
                     VStack {
                         ScreenBox(isOn: false, width: geo.size.width, height: geo.size.height * 0.85) {
                             SpriteView(scene: scene,
-                                       options: [.allowsTransparency])
+                                       preferredFramesPerSecond: 60,
+                                       options: [.allowsTransparency],
+                                       debugOptions: [.showsFPS, .showsNodeCount])
                             .padding(2.0)
                         }
                         Spacer()

@@ -75,12 +75,14 @@ class ADSRScene: SKScene {
         let tickSpacing = 0.1 / scale
         for x in stride(from: 0, to: size.width, by: tickSpacing) {
             let tickNode = SKSpriteNode(color: .darkGray, size: CGSize(width: 1, height: 5))
-            tickNode.position = CGPoint(x: x, y: 5.0)
+            tickNode.anchorPoint = CGPoint(x: 0.5, y: 0)
+            tickNode.position = CGPoint(x: x, y: 0)
             addChild(tickNode)
         }
         for x in stride(from: 0, to: size.width, by: tickSpacing * 10) {
             let tickNode = SKSpriteNode(color: .gray, size: CGSize(width: 1, height: 10))
-            tickNode.position = CGPoint(x: x, y: 7.5)
+            tickNode.anchorPoint = CGPoint(x: 0.5, y: 0)
+            tickNode.position = CGPoint(x: x, y: 0)
             addChild(tickNode)
         }
 

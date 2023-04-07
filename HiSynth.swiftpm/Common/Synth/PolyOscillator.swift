@@ -100,7 +100,11 @@ class PolyOscillator: HasKeyHandlar {
         // Cancel previous noteOff task for unsetting `allocated`
         if let previousTask = noteTasks[pitch.midiNoteNumber] {
             previousTask.cancel()
-            if let previousIdx = allocated[pitch.midiNoteNumber] {
+            var previousIdx: Int?
+            withLock {
+                previousIdx = self.allocated[pitch.midiNoteNumber]
+            }
+            if let previousIdx = previousIdx {
                 envPool[previousIdx].hardCloseGate()
             }
         }
@@ -127,25 +131,37 @@ class PolyOscillator: HasKeyHandlar {
         oscPool[idx!].frequency = AUValue(pitch.midiNoteNumber + pitchOffset).midiNoteToFrequency()
         envPool[idx!].openGate()
         voices.append(pitch.midiNoteNumber)
-        allocated[pitch.midiNoteNumber] = idx!
+        withLock {
+            self.allocated[pitch.midiNoteNumber] = idx!
+        }
     }
 
     func noteOff(_ pitch: Pitch) {
         print("Info: allocated: ", allocated, "voices: ", voices)
-        let idx = allocated[pitch.midiNoteNumber]
-        if let idx = idx {
+        var idx: Int?
+        withLock {
+            idx = self.allocated[pitch.midiNoteNumber]
+        }
+        if let idx = idx{
             envPool[idx].closeGate()
             let task = DispatchWorkItem {
-                self.taskLock.lock()
-                self.allocated[pitch.midiNoteNumber] = nil
-                self.taskLock.unlock()
+                self.withLock {
+                    self.allocated.removeValue(forKey: pitch.midiNoteNumber)
+                    self.voices.removeAll { $0 == pitch.midiNoteNumber }
+                }
             }
             // Release the oscillator after 0.3 seconds.
             taskQueue.asyncAfter(deadline: .now() + Double(envPool[idx].releaseDuration) + 0.3, execute: task)
             noteTasks[pitch.midiNoteNumber] = task
         } else {
             print("Warning: noteOff called on a note that is not playing.")
+            self.voices.removeAll { $0 == pitch.midiNoteNumber }
         }
-        self.voices.removeAll { $0 == pitch.midiNoteNumber }
+    }
+
+    fileprivate func withLock(_ block: @escaping () -> Void) {
+        taskLock.lock()
+        block()
+        taskLock.unlock()
     }
 }
