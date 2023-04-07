@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Tonic
 
 protocol HasKeyHandlar {
     func noteOn(_ pitch: Pitch)

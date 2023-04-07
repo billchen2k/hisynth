@@ -20,4 +20,16 @@ extension Color {
             opacity: alpha
         )
     }
+
+    var uiColor: UIColor {
+        return UIColor(self)
+    }
+}
+
+/// To allow nodes to be gated
+public protocol Gated {
+    /// Start the gate
+    func openGate()
+    /// Stop the gate
+    func closeGate()
 }

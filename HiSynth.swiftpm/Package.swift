@@ -10,7 +10,7 @@ import AppleProductTypes
 let package = Package(
     name: "HiSynth",
     platforms: [
-        .iOS("16.0")
+        .iOS("15.2")
     ],
     products: [
         .iOSApplication(
@@ -21,7 +21,7 @@ let package = Package(
             displayVersion: "1.0",
             bundleVersion: "1",
             appIcon: .asset("AppIcon"),
-            accentColor: .presetColor(.teal),
+            accentColor: .presetColor(.cyan),
             supportedDeviceFamilies: [
                 .pad,
                 .phone
@@ -31,20 +31,13 @@ let package = Package(
                 .landscapeRight,
                 .landscapeLeft,
                 .portraitUpsideDown(.when(deviceFamilies: [.pad]))
-            ]
+            ],
+            appCategory: .music
         )
-    ],
-    dependencies: [
-        .package(url: "https://github.com/AudioKit/Keyboard", "1.0.0"..<"2.0.0"),
-        .package(url: "https://github.com/AudioKit/SporthAudioKit", "5.0.0"..<"6.0.0")
     ],
     targets: [
         .executableTarget(
             name: "AppModule",
-            dependencies: [
-                .product(name: "Keyboard", package: "keyboard"),
-                .product(name: "SporthAudioKit", package: "sporthaudiokit")
-            ],
             path: ".",
             resources: [
                 .process("Resources")

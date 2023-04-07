@@ -1,7 +1,10 @@
 import SwiftUI
 import AVFoundation
-import Keyboard
 
+
+/// Welcome to **HiSynth**.
+///
+/// It is recommended to play around with this synthesizer on an iPad.
 struct ContentView: View {
 
     @StateObject var core = HiSynthCore()
@@ -36,6 +39,9 @@ struct ContentView: View {
             }
             .background(LinearGradient(gradient: Gradient(colors: [Color(hex: 0x4a4a4a), Color(hex: 0x000000)]),
                                        startPoint: .top, endPoint: .bottom))
+            .onAppear {
+                core.start()
+            }
         }
     }
 }
