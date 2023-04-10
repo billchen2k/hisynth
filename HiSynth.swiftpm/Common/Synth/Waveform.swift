@@ -14,6 +14,7 @@ enum HSWaveform {
     case saw
     case triangle
     case pulse
+    case rsaw // Only used in LFOs
 
     private func pulseWave(pulseSize: Float = 0.25) -> [Table.Element] {
         var table = [Table.Element](zeros: 4096)
@@ -35,6 +36,8 @@ enum HSWaveform {
             return Table(.triangle)
         case .pulse:
             return Table(pulseWave())
+        case .rsaw:
+            return Table(.reverseSawtooth)
         }
     }
 
@@ -44,7 +47,8 @@ enum HSWaveform {
             .square: "wave-square",
             .saw: "wave-saw",
             .triangle: "wave-triangle",
-            .pulse: "wave-pulse"
+            .pulse: "wave-pulse",
+            .rsaw: "wave-rsaw",
         ]
         return names[self]!
     }
@@ -55,7 +59,8 @@ enum HSWaveform {
             .square: "Square",
             .saw: "Saw",
             .triangle: "Triangle",
-            .pulse: "Pulse"
+            .pulse: "Pulse",
+            .rsaw: "Reversed Saw"
         ]
         return names[self]!
     }

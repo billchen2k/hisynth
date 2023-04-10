@@ -26,6 +26,12 @@ extension Color {
     }
 }
 
+extension CGPoint {
+    init(_ x: CGFloat, _ y: CGFloat) {
+        self.init(x: x, y: y)
+    }
+}
+
 extension Double {
 
     /// Round to decimal

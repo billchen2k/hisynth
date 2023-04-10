@@ -108,8 +108,10 @@ class PolyOscillator: HasKeyHandlar {
                 envPool[previousIdx].hardCloseGate()
             }
         }
-
-        var idx = (0..<oscCount).first{ !Set(allocated.values).contains($0) }
+        var idx: Int?
+        withLock {
+            idx = (0..<self.oscCount).first{ !Set(self.allocated.values).contains($0) }
+        }
         // Find the first not playing osc for voice allocation
         if idx == nil {
             // Perform voice stealing.

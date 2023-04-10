@@ -1,6 +1,6 @@
 //
-//  File.swift
-//
+//  FilterScene.swift
+//  HiSynth
 //
 //  Created by Bill Chen on 2023/4/7.
 //
@@ -16,13 +16,28 @@ class FilterScene: SKScene {
         controller.outputNode
     }
 
-    var maxAmplitude: Float = 0.0
-    var minAmplitude: Float = -70.0
-    var referenceValueForFFT: Float = 12.0
     var amplitudes: [Float?] = Array(repeating: 0.0, count: 1024)
+
+    let minLogFrequency = Float(log10(20.0))
+    let maxLogFrequency = Float(log10(20_000.0))
+
+    /// EQ Parameters for rendering the curve
+    var lowCut: Float {
+        controller.filters.highPassFilter.$cutoffFrequency.value
+    }
+    var lowRes: Float {
+        controller.filters.highPassFilter.$resonance.value
+    }
+    var highCut: Float {
+        controller.filters.lowPassFilter.$cutoffFrequency.value
+    }
+    var highRes: Float {
+        controller.filters.lowPassFilter.$resonance.value
+    }
 
     let numberOfBars: Int = 128
     var barNodes: [SKSpriteNode] = []
+    var eqNode: SKShapeNode!
 
     override func didMove(to view: SKView) {
         backgroundColor = .clear
@@ -35,27 +50,28 @@ class FilterScene: SKScene {
         tap.isNormalized = false
         tap.start()
         createBars()
+        createEQ()
     }
 
     override func update(_ currentTime: TimeInterval) {
         updateBars()
+        updateEQ()
     }
 
     private func updateAmplitudes(_ fftData: [Float]) {
         let fftSize = fftData.count
-        // loop by two through all the fft data
+        // Loop by two through all the fft data
         for i in stride(from: 0, to: fftSize - 1, by: 2) {
-            // get the real and imaginary parts of the complex number
+            // Get the real and imaginary parts of the complex number
             let real = fftData[i]
             let imaginary = fftData[i + 1]
 
             let normalizedBinMagnitude = 2.0 * sqrt(real * real + imaginary * imaginary) / Float(fftSize)
             let amplitude = (20.0 * log10(normalizedBinMagnitude))
 
-            // scale the resulting data
+            // Scale the resulting data
             var scaledAmplitude = (amplitude + 250) / 229.8
             scaledAmplitude = scaledAmplitude.clamped(to: 0...1)
-
             scaledAmplitude = (scaledAmplitude - 0.3) / 0.6
 
             DispatchQueue.main.async {
@@ -64,31 +80,6 @@ class FilterScene: SKScene {
                 }
             }
         }
-//        var fftData = fftFloats
-//        for index in 0 ..< fftData.count {
-//            if fftData[index].isNaN { fftData[index] = 0.0 }
-//        }
-//        var one = Float(1.0)
-//        var zero = Float(0.0)
-//        var decibelNormalizationFactor = Float(1.0 / (maxAmplitude - minAmplitude))
-//        var decibelNormalizationOffset = Float(-minAmplitude / (maxAmplitude - minAmplitude))
-//
-//        var decibels = [Float](repeating: 0, count: fftData.count)
-//        vDSP_vdbcon(fftData, 1, &referenceValueForFFT, &decibels, 1, vDSP_Length(fftData.count), 0)
-//
-//        vDSP_vsmsa(decibels,
-//                   1,
-//                   &decibelNormalizationFactor,
-//                   &decibelNormalizationOffset,
-//                   &decibels,
-//                   1,
-//                   vDSP_Length(decibels.count))
-//
-//        vDSP_vclip(decibels, 1, &zero, &one, &decibels, 1, vDSP_Length(decibels.count))
-//
-//        DispatchQueue.main.async {
-//            self.amplitudes = decibels
-//        }
     }
 
     private func createBars() {
@@ -102,10 +93,65 @@ class FilterScene: SKScene {
         }
     }
 
+    /// Get the x coordinate for a given frequency
+    private func freqX(_ freq: Float) -> CGFloat {
+        let logFrequency = log10(freq)
+        let x = CGFloat((logFrequency - minLogFrequency) / (maxLogFrequency - minLogFrequency)) * size.width
+        return x
+    }
+
+    private func getEQPath() -> CGPath {
+        // slopeWidth
+        let slope: CGFloat = 20.0
+        // Half height (Center of y)
+        let cy: CGFloat = size.height / 2
+        // Center width of high pass & low pass
+        let cx = (freqX(highCut) + freqX(lowCut)) / 2
+
+        let resY: (AUValue) -> CGFloat = { CGFloat($0) * 2.0 }
+
+        let path = CGMutablePath()
+        if freqX(highCut) - freqX(lowCut) < slope {
+            // Draw a straight line at the bottom of the scene
+            path.move(to: CGPoint(x: 0, y: 0))
+            path.addLine(to: CGPoint(x: size.width, y: 0))
+        } else {
+            path.move(to: CGPoint(freqX(lowCut) - slope * 2, 0.0))
+            if lowRes >= 0 {
+                let lowControl = CGPoint(freqX(lowCut), cy)
+                path.addQuadCurve(to: CGPoint(freqX(lowCut), cy + resY(lowRes)), control: lowControl)
+                path.addQuadCurve(to: CGPoint(cx, cy), control: lowControl)
+            } else {
+                path.addCurve(to: CGPoint(cx, cy),
+                              control1: CGPoint(freqX(lowCut), cy + 1.5 * resY(lowRes)),
+                              control2: CGPoint(freqX(lowCut) + slope, cy))
+            }
+            if highRes >= 0 {
+                let highControl = CGPoint(freqX(highCut), cy)
+                path.addQuadCurve(to: CGPoint(freqX(highCut), cy + resY(highRes)), control: highControl)
+                path.addQuadCurve(to: CGPoint(freqX(highCut) + slope * 2, 0.0), control: highControl)
+            } else {
+                path.addCurve(to: CGPoint(freqX(highCut) + slope * 2, 0.0),
+                              control1: CGPoint(freqX(highCut) - slope, cy),
+                              control2: CGPoint(freqX(highCut), cy + 1.5 * resY(highRes)))
+            }
+        }
+        return path
+    }
+
+    private func createEQ() {
+        // lineWidth
+        let w: CGFloat = 2.0
+
+        eqNode = SKShapeNode(path: getEQPath())
+        eqNode.strokeColor = Theme.colorHighlight.uiColor
+        eqNode.lineWidth = w
+        eqNode.fillShader = SKShader(fileNamed: "ScreenCurveGradient.fsh")
+        addChild(eqNode)
+    }
+
     private func updateBars() {
         guard amplitudes.count >= numberOfBars else { return }
-        let minLogFrequency = Float(log10(20.0))
-        let maxLogFrequency = Float(log10(20_000.0))
         let logFrequencyStep = (maxLogFrequency - minLogFrequency) / Float(numberOfBars)
 
         for (index, bar) in barNodes.enumerated() {
@@ -123,18 +169,14 @@ class FilterScene: SKScene {
 
             let barHeight = CGFloat(averageAmplitude) * size.height
             bar.size = CGSize(width: bar.size.width, height: barHeight)
-
-            let resizeAction = SKAction.resize(toWidth: bar.size.width, height: barHeight, duration: 0.05)
-
-            bar.run(resizeAction)
-//
-//            // Create a sequence of actions to animate the size change and restore the width
-//            let sequence = SKAction.sequence([resizeAction, restoreWidthAction])
-//
-//            // Run the sequence of actions on the bar node
-//            bar.run(sequence)
+//            let resizeAction = SKAction.resize(toWidth: bar.size.width, height: barHeight, duration: 0.05)
+//            bar.run(resizeAction)
+        
         }
     }
 
+    private func updateEQ() {
+        eqNode.path = getEQPath()
+    }
 }
 

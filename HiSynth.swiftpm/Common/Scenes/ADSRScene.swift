@@ -62,7 +62,7 @@ class ADSRScene: SKScene {
         let fillPath = curvePath.mutableCopy()!
         fillPath.addLine(to: CGPoint(x: w, y: w))
         let fillNode = SKShapeNode(path: fillPath)
-        let gradient = SKShader(fileNamed: "ADSRGradient.fsh")
+        let gradient = SKShader(fileNamed: "ScreenCurveGradient.fsh")
         fillNode.fillShader = gradient
         fillNode.fillColor = .clear
         fillNode.strokeColor = .clear

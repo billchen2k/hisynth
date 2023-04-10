@@ -1,6 +1,6 @@
 //
 //  HSSlider.swift
-//
+//  HiSynth
 //
 //  Created by Bill Chen on 2023/4/5.
 //
@@ -16,7 +16,7 @@ struct HSSlider: View {
 
     var range: ClosedRange<Float> = 1.0...100.0
 
-    /// Step size of the range.
+    /// Step size of the range. If it is a log scale, the output value won't be stepped. This size will only be used for rendering ticks.
     var stepSize: Float = 0.01
 
     var width: CGFloat = 45.0
@@ -25,17 +25,36 @@ struct HSSlider: View {
     /// Set if when value = 0, the signal light will be turned gray.
     var allowPoweroff = true
 
+    /// If the scale is logarithm
+    var log: Bool = false
+
     /// Set the sensitivity of the dragging gesture.
     var sensitivity: Float = 1.0
 
     var onChanged: ((Float) -> Void)?
 
+    /// Normalized value of the slider between 0.0 - 1.0
     var normalizedValue: Float {
         (value - range.lowerBound) / (range.upperBound - range.lowerBound)
     }
 
     var steps: Int {
         Int((range.upperBound - range.lowerBound) / stepSize) + 1
+    }
+
+    private var thumbOffset: CGFloat {
+        if log {
+            if value > 0.0 {
+                let logValue = log10(CGFloat(value / range.lowerBound))
+                let logRange = log10(CGFloat(range.upperBound / range.lowerBound))
+                return logValue / logRange * (height * 0.9)
+            } else {
+//                print("Warning: trying to set negative value with a log slider: \(value)")
+                return 0.0
+            }
+        } else {
+            return CGFloat(normalizedValue) * (height * 0.9)
+        }
     }
 
     var body: some View {
@@ -76,10 +95,10 @@ struct HSSlider: View {
                     .shadow(color: .black.opacity(0.8), radius: 4.0, x: 0.0, y: 4.0)
                     .aspectRatio(contentMode: .fit)
                     .frame(width: width)
-                    .offset(y: -CGFloat(normalizedValue) * (height * 0.9))
-                    .gesture(DragGesture(minimumDistance: 0.0)
+                    .offset(y: -thumbOffset)
+                    .gesture(DragGesture(minimumDistance: 1.0)
                         .onChanged { v in
-                            updateValue(from: v)
+                            updateValue(from: -v.translation.height)
                         }
                         .onEnded { _ in
                             isDragging = false
@@ -87,21 +106,39 @@ struct HSSlider: View {
                     )
             }
         }.frame(width: width, height: height)
+        // Allow click @TODO
+//            .gesture(
+//                DragGesture(minimumDistance: 0)
+//                    .onEnded { v in
+//                        isDragging = false
+//                        print("TAP", v.translation)
+//                        print("START", v.startLocation)
+//                        if v.translation.height <= 0.1 {
+//                            updateValue(from: v.startLocation.y + thumbOffset)
+//                        }
+//                    }
+//            )
     }
 
-    private func updateValue(from value: DragGesture.Value) {
+    /// Update value with offset.
+    private func updateValue(from y: CGFloat) {
         if !isDragging {
             oldValue = self.value
             isDragging = true
         }
-        let y = -value.translation.height
-        var offset: Float = 0.0
-        offset = Float(y / height) * (range.upperBound - range.lowerBound) * sensitivity
-        let unsteppedValue = max(range.lowerBound, min(range.upperBound, self.oldValue + offset))
-        let steppedValue = (unsteppedValue / stepSize).rounded() * stepSize
-        self.value = steppedValue
-        print(steppedValue)
-        self.onChanged?(steppedValue)
+        var newValue: Float
+        if log {
+            let ratio = Float(y / (height * 0.9)) * sensitivity
+            newValue = pow(10, log10(self.oldValue) + ratio * log10(range.upperBound / range.lowerBound))
+            newValue = max(range.lowerBound, min(range.upperBound, newValue))
+        } else {
+            let offset = Float(y / height) * (range.upperBound - range.lowerBound) * sensitivity
+            let unsteppedValue = max(range.lowerBound, min(range.upperBound, self.oldValue + offset))
+            newValue = (unsteppedValue / stepSize).rounded() * stepSize
+        }
+        self.value = newValue
+        print(newValue)
+        self.onChanged?(newValue)
     }
 }
 
@@ -120,3 +157,4 @@ struct Slider_Previews: PreviewProvider {
         HSSlider_Container()
     }
 }
+

@@ -155,6 +155,8 @@ class HiSynthCore: ObservableObject, HasAudioEngine {
         self.envelopeController = envelopeController
         self.filterController = filterController
         engine.output = filterController.outputNode
+        /// Control the maximum volume
+        filterController.outputNode.volume = 0.4
     }
 
     func noteOn(pitch: Pitch, point: CGPoint) {
