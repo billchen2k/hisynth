@@ -126,10 +126,6 @@ import Foundation
 //
 //}
 
-class LFOController: ObservableObject {
-
-}
-
 
 class SFXController: ObservableObject {
 
@@ -142,25 +138,34 @@ class HiSynthCore: ObservableObject, HasAudioEngine {
     @Published var oscillatorController: OscillatorController
     @Published var envelopeController: EnvelopeController
     @Published var filterController: FilterController
-    @Published var lfoController = LFOController()
+    @Published var lfoController: LFOController
     @Published var sfxController = SFXController()
 
     init() {
         polyOscillators = [PolyOscillator(), PolyOscillator()]
-        let oscilltatorController = OscillatorController(oscs: polyOscillators)
+        let oscillatorController = OscillatorController(oscs: polyOscillators)
         let envelopeController = EnvelopeController(oscs: polyOscillators)
         let filterController = FilterController(envelopeController.outputNode)
 
-        self.oscillatorController = oscilltatorController
+        self.oscillatorController = oscillatorController
         self.envelopeController = envelopeController
         self.filterController = filterController
         engine.output = filterController.outputNode
-        /// Control the maximum volume
-        filterController.outputNode.volume = 0.4
+
+        let lfoController = LFOController(connectors: [oscillatorController, filterController])
+        lfoController.amplitudeMod = filterController.amplitudeModulator
+        lfoController.filterLowMod = filterController.lowPassModulator
+        lfoController.filterHighMod = filterController.highPassModulator
+        lfoController.pitchMod = oscillatorController.pitchModulator
+        self.lfoController = lfoController
     }
 
     func noteOn(pitch: Pitch, point: CGPoint) {
         print("Note on:", pitch.midiNoteNumber)
+        // If it is the first note, sync the lfo.
+        if oscillatorController.osc1.voices.count == 0 || oscillatorController.osc2.voices.count == 0 {
+            lfoController.sync()
+        }
         oscillatorController.noteOn(pitch)
     }
 
@@ -175,7 +180,7 @@ class HiSynthCore: ObservableObject, HasAudioEngine {
         } catch {
             print("Error: engine start failed.")
         }
-        envelopeController.loadDefaults()
-        filterController.loadDefaults()
+        envelopeController.setup()
+        filterController.setup()
     }
 }

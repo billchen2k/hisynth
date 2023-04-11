@@ -21,7 +21,7 @@ struct ContentView: View {
                         OscillatorPanel(controller: core.oscillatorController)
                         EnvelopePanel(controller: core.envelopeController)
                         FilterPanel(controller: core.filterController)
-                        OscillatorPanel(controller: core.oscillatorController)
+                        LFOPanel(controller: core.lfoController)
                         OscillatorPanel(controller: core.oscillatorController)
                         OscillatorPanel(controller: core.oscillatorController)
                     }.padding(4.0)

@@ -1,6 +1,6 @@
 //
-//  Oscillator.swift
-//  
+//  HSOscillator.swift
+//  HiSynth
 //
 //  Created by Bill Chen on 2023/4/7.
 //
@@ -9,13 +9,15 @@ import Foundation
 import CoreAudio
 import AVFoundation
 
-/// This Oscillator is adapted from AudioKit's `PlaygroundOscillator`.
+/// This Oscillator is used as HiSynth's sound source.
+/// It is adapted from AudioKit's `PlaygroundOscillator`.
 ///     Copyright AudioKit. All Rights Reserved. Revision History at http://github.com/AudioKit/AudioKit/
 ///
 /// Modifications:
 ///
 ///     1. Added the ability to update waveforms.
 ///     2. Fixed bugs that will cause the oscillator to freeze when running on Mac `Catalyst`.
+///     3. Guard the frequency to be within 10Hz to 22kHz.
 public class HSOscillator: Node {
     fileprivate lazy var sourceNode = AVAudioSourceNode { [self] _, _, frameCount, audioBufferList in
         let ablPointer = UnsafeMutableAudioBufferListPointer(audioBufferList)
@@ -50,7 +52,14 @@ public class HSOscillator: Node {
     fileprivate var waveform: Table?
 
     /// Pitch in Hz
-    public var frequency: Float = 440
+    private var _frequency: Float = 440
+
+    public var frequency: Float {
+        get { _frequency }
+        set {
+            _frequency = max(10, min(newValue, 22_000))
+        }
+    }
 
     /// Volume usually 0-1
     public var amplitude: AUValue = 1

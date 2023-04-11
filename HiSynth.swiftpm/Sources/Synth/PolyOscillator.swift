@@ -8,7 +8,10 @@
 import AVFoundation
 import Foundation
 
+/// Wraps multiple oscillators and envelopes for polyphonic synthesis.
 class PolyOscillator: HasKeyHandlar {
+
+    static let oscCount: Int = 12
 
     var outputNode: Mixer = Mixer()
 
@@ -49,7 +52,8 @@ class PolyOscillator: HasKeyHandlar {
     var oscPool: [HSOscillator] = []
     var envPool: [AmplitudeEnvelope] = []
 
-    var oscCount: Int = 12
+    /// Base frequency before Pitch modulation
+    var frequencies: [Float] = Array(repeating: 20.0, count: oscCount)
 
     /// MIDINotenumber -> oscNumber or nil for not playing. Used for voice allocation
     var allocated: [Int8: Int] = [:]
@@ -65,12 +69,8 @@ class PolyOscillator: HasKeyHandlar {
 
     var taskLock = NSLock()
 
-//    let timer = DispatchSource.makeTimerSource(queue: DispatchQueue.global())
-//    var phase: Int = 0
-
-
     init() {
-        for _ in 0..<oscCount {
+        for _ in 0..<PolyOscillator.oscCount {
             let osc = HSOscillator()
             osc.setWaveform(waveform.getTable())
             osc.amplitude = level
@@ -85,15 +85,6 @@ class PolyOscillator: HasKeyHandlar {
             osc.start()
             outputNode.addInput(env)
         }
-//        timer.schedule(deadline: .now(), repeating: .milliseconds(1))
-//
-//        let waveform = AudioKit.Table(.sine)
-//
-//        timer.setEventHandler {
-//            self.phase += 1
-//            self.outputNode.volume = waveform.content[self.phase % waveform.content.count] * 0.5 + 0.5
-//        }
-//        timer.resume()
     }
 
     func noteOn(_ pitch: Pitch) {
@@ -110,7 +101,7 @@ class PolyOscillator: HasKeyHandlar {
         }
         var idx: Int?
         withLock {
-            idx = (0..<self.oscCount).first{ !Set(self.allocated.values).contains($0) }
+            idx = (0..<PolyOscillator.oscCount).first{ !Set(self.allocated.values).contains($0) }
         }
         // Find the first not playing osc for voice allocation
         if idx == nil {
@@ -130,6 +121,7 @@ class PolyOscillator: HasKeyHandlar {
 
         print("Info: Playing note \(pitch.midiNoteNumber) on osc \(idx!)")
         // Voice allocation
+        frequencies[idx!] = AUValue(pitch.midiNoteNumber + pitchOffset).midiNoteToFrequency()
         oscPool[idx!].frequency = AUValue(pitch.midiNoteNumber + pitchOffset).midiNoteToFrequency()
         envPool[idx!].openGate()
         voices.append(pitch.midiNoteNumber)
@@ -153,7 +145,7 @@ class PolyOscillator: HasKeyHandlar {
                 }
             }
             // Release the oscillator after 0.3 seconds.
-            taskQueue.asyncAfter(deadline: .now() + Double(envPool[idx].releaseDuration) + 0.3, execute: task)
+            taskQueue.asyncAfter(deadline: .now() + Double(envPool[idx].releaseDuration) + 0.05, execute: task)
             noteTasks[pitch.midiNoteNumber] = task
         } else {
             print("Warning: noteOff called on a note that is not playing.")

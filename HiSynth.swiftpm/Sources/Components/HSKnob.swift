@@ -23,7 +23,7 @@ struct HSKnob: View {
     var allowPoweroff = true
 
     /// If show value on the know
-    var ifShowValue = true
+    var ifShowValue = false
 
     /// Set the sensitivity of the dragging gesture.
     var sensitivity: Float = 0.3
@@ -101,6 +101,7 @@ struct HSKnob: View {
         let steppedValue = (clippedValue / stepSize).rounded() * stepSize
         self.value = steppedValue
         if oldValue != steppedValue {
+            print(steppedValue)
             self.onChanged?(steppedValue)
         }
     }

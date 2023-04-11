@@ -50,10 +50,10 @@ class EnvelopeController: ObservableObject {
         outputNode.addInput(osc2.outputNode)
     }
 
-    public func loadDefaults() {
+    public func setup() {
         attackDuration = 0.0
         decayDuration = 0.5
         sustainLevel = 1.0
-        releaseDuration = 0.1
+        releaseDuration = 0.01
     }
 }

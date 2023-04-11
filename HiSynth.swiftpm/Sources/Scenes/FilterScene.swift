@@ -16,10 +16,11 @@ class FilterScene: SKScene {
         controller.outputNode
     }
 
+    var fftData: [Float]!
     var amplitudes: [Float?] = Array(repeating: 0.0, count: 1024)
 
     let minLogFrequency = Float(log10(20.0))
-    let maxLogFrequency = Float(log10(20_000.0))
+    let maxLogFrequency = Float(log10(22_000.0))
 
     /// EQ Parameters for rendering the curve
     var lowCut: Float {
@@ -45,10 +46,18 @@ class FilterScene: SKScene {
         size = view.frame.size
         self.tap = FFTTap(mixer, callbackQueue: .main) { fftData in
             // fftData is an array of size 2048
-            self.updateAmplitudes(fftData)
+            self.fftData = fftData
         }
+        // Update amplitudes 
+        Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
+            if let fftData = self.fftData {
+                self.updateAmplitudes(fftData)
+            }
+        }
+
         tap.isNormalized = false
         tap.start()
+        createTicks()
         createBars()
         createEQ()
     }
@@ -100,6 +109,22 @@ class FilterScene: SKScene {
         return x
     }
 
+    private func createTicks() {
+        let freqs = [50, 100, 200, 500, 1_000, 2_000, 5_000, 10_000, 20_000]
+        let labels = ["50", "100", "200", "500", "1k", "2k", "5k", "10k", "20k"]
+        for (freq, label) in zip(freqs, labels) {
+            let tick = SKSpriteNode(color: .darkGray, size: CGSize(width: 1, height: size.height))
+            tick.position = CGPoint(x: freqX(Float(freq)), y: size.height / 2)
+            let label = SKLabelNode(text: label)
+            label.fontName = "Menlo"
+            label.fontColor = .darkGray
+            label.fontSize = 10
+            label.position = CGPoint(x: tick.position.x - 10, y: size.height - 15)
+            addChild(tick)
+            addChild(label)
+        }
+    }
+
     private func getEQPath() -> CGPath {
         // slopeWidth
         let slope: CGFloat = 20.0
@@ -146,7 +171,7 @@ class FilterScene: SKScene {
         eqNode = SKShapeNode(path: getEQPath())
         eqNode.strokeColor = Theme.colorHighlight.uiColor
         eqNode.lineWidth = w
-        eqNode.fillShader = SKShader(fileNamed: "ScreenCurveGradient.fsh")
+        eqNode.fillShader = SKShader(fileNamed: "VerticalGradient.fsh")
         addChild(eqNode)
     }
 
@@ -161,8 +186,8 @@ class FilterScene: SKScene {
             let lowerFrequency = pow(10, lowerLogFrequency)
             let upperFrequency = pow(10, upperLogFrequency)
 
-            let lowerIndex = Int(lowerFrequency * Float(amplitudes.count) / 20_000.0)
-            let upperIndex = Int(upperFrequency * Float(amplitudes.count) / 20_000.0)
+            let lowerIndex = Int(lowerFrequency * Float(amplitudes.count) / 22_000.0)
+            let upperIndex = Int(upperFrequency * Float(amplitudes.count) / 22_000.0)
 
             let subArray = Array(amplitudes[lowerIndex..<upperIndex])
             let averageAmplitude = subArray.reduce(0, { $0 + ($1 ?? 0) }) / Float(subArray.count)
@@ -171,7 +196,6 @@ class FilterScene: SKScene {
             bar.size = CGSize(width: bar.size.width, height: barHeight)
 //            let resizeAction = SKAction.resize(toWidth: bar.size.width, height: barHeight, duration: 0.05)
 //            bar.run(resizeAction)
-        
         }
     }
 

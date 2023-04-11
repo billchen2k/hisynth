@@ -8,7 +8,7 @@
 import Foundation
 import AVFoundation
 
-class OscillatorController: ObservableObject, HasKeyHandlar {
+class OscillatorController: ObservableObject, HasKeyHandlar, HasModulatorConnector {
 
     @Published var waveform1: HSWaveform = .sine {
         didSet {
@@ -47,6 +47,8 @@ class OscillatorController: ObservableObject, HasKeyHandlar {
         }
     }
 
+    var pitchModulator: Modulator?
+
     var osc1: PolyOscillator
     var osc2: PolyOscillator
 
@@ -68,6 +70,15 @@ class OscillatorController: ObservableObject, HasKeyHandlar {
         osc2.noteOff(pitch)
     }
 
+    func connectModulator(lfos: [LowFreqOscillator]) {
+        let oscillatorPitch = ModulatableCustomParam(440.0) { v in
+            (0..<PolyOscillator.oscCount).forEach( {
+                self.osc1.oscPool[$0].frequency = self.osc1.frequencies[$0] + v
+                self.osc2.oscPool[$0].frequency = self.osc2.frequencies[$0] + v
+            })
+        }
+        let pitchMod = Modulator(target: oscillatorPitch, range: -0.1...0.1, log: true, lfos: lfos)
+        pitchMod.start()
+        self.pitchModulator = pitchMod
+    }
 }
-
-

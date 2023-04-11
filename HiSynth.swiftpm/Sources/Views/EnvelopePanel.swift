@@ -34,7 +34,7 @@ struct EnvelopePanel: View {
                 }.frame(width: sliderWidth)
                 GeometryReader { geo in
                     VStack {
-                        HSSlider(value: $controller.decayDuration, range: 0.0...2.0, stepSize: 0.005, height: geo.size.height * 0.85, allowPoweroff: false)
+                        HSSlider(value: $controller.decayDuration, range: 0.05...2.0, stepSize: 0.005, height: geo.size.height * 0.85, allowPoweroff: false)
                         Spacer()
                         Text("Decay").modifier(HSFont(.body2))
                     }
@@ -48,7 +48,7 @@ struct EnvelopePanel: View {
                 }.frame(width: sliderWidth)
                 GeometryReader { geo in
                     VStack {
-                        HSSlider(value: $controller.releaseDuration, range: 0.0...2.0, stepSize: 0.005, height: geo.size.height * 0.85, allowPoweroff: false)
+                        HSSlider(value: $controller.releaseDuration, range: 0.01...10.0, stepSize: 0.005, height: geo.size.height * 0.85, allowPoweroff: false, log: true)
                         Spacer()
                         Text("Release").modifier(HSFont(.body2))
                     }

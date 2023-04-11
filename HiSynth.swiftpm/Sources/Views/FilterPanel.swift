@@ -57,7 +57,7 @@ struct FilterPanel: View {
                             Spacer()
                             Text("EQ")
                             Spacer()
-                            Text("Loww Pass")
+                            Text("Low Pass")
                         }.modifier(HSFont(.body2))
                     }
                 }.frame(width: screenWidth)
@@ -76,8 +76,6 @@ struct FilterPanel: View {
                         Text("Resonance").modifier(HSFont(.body2))
                     }
                 }.frame(width: sliderWidth)
-
-
             }
         }
     }

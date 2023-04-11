@@ -45,6 +45,9 @@ enum HSFontType {
     /// Mono fonts to display on the knob
     case bodyMono
 
+    /// Small fonts to display on the knob
+    case body3
+
     /// Title for walkthrough panels.
     case title1
 
@@ -82,8 +85,11 @@ struct HSFont: ViewModifier {
         case .body2:
             content.font(.system(size: 11.0, weight: .regular))
                 .foregroundColor(Theme.colorBodyText)
+        case .body3:
+            content.font(.system(size: 9.0, weight: .regular))
+                .foregroundColor(Theme.colorBodyText)
         case .bodyMono:
-            content.font(.system(size: 10.0, weight: .regular, design: .monospaced))
+            content.font(.system(size: 9.0, weight: .regular, design: .monospaced))
                 .foregroundColor(Theme.colorBodyText)
         case .title1:
             content.font(.system(size: 24.0, weight: .regular))

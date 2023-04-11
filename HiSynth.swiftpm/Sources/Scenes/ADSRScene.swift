@@ -58,18 +58,16 @@ class ADSRScene: SKScene {
         curveNode.strokeColor = Theme.colorHighlight.uiColor
         curveNode.lineWidth = w
 
-
         let fillPath = curvePath.mutableCopy()!
         fillPath.addLine(to: CGPoint(x: w, y: w))
         let fillNode = SKShapeNode(path: fillPath)
-        let gradient = SKShader(fileNamed: "ScreenCurveGradient.fsh")
+        let gradient = SKShader(fileNamed: "VerticalGradient.fsh")
         fillNode.fillShader = gradient
         fillNode.fillColor = .clear
         fillNode.strokeColor = .clear
 
         addChild(fillNode)
         addChild(curveNode)
-
 
         // Create Ticks
         let tickSpacing = 0.1 / scale
@@ -85,8 +83,6 @@ class ADSRScene: SKScene {
             tickNode.position = CGPoint(x: x, y: 0)
             addChild(tickNode)
         }
-
-        // Create Gradient
 
         // Create Texts
         let textNode = SKLabelNode(text: "A \(Int(a * 1000))ms D \(Int(d * 1000))ms S \(Double(s).levelToDb().round(1))dB R \(Int(r * 1000))ms")

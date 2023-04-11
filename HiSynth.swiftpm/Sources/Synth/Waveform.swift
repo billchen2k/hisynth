@@ -8,6 +8,7 @@
 import Foundation
 
 
+/// Waveforms used in HSOscillator (for generating sound) and LowFreqOscillator (for modulating parameters).
 enum HSWaveform {
     case sine
     case square

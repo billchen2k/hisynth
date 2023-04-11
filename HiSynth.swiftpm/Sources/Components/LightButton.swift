@@ -16,6 +16,7 @@ struct LightButton: View {
 
     /// Text to display on the button.
     var title: String = ""
+    var vertical: Bool = false
 
     /// Action callback.
     var action: (() -> Void)?;
@@ -33,8 +34,15 @@ struct LightButton: View {
                         .stroke(.black, lineWidth: 1.0)
                         .cornerRadius(3.0)
                 }
-            Text(title)
-                .modifier(HSFont(.body1))
+            if vertical {
+                Text(title)
+                    .modifier(HSFont(.body1))
+                    .frame(width: height, height: width)
+                    .rotationEffect(.degrees(-90))
+            } else {
+                Text(title)
+                    .modifier(HSFont(.body1))
+            }
         }.frame(width: width, height: height)
             .onTapGesture {
                 if let action = action {
