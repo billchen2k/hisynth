@@ -124,12 +124,7 @@ import Foundation
 //        self.voices.removeAll { $0 == pitch.midiNoteNumber }
 //    }
 //
-//}
-
-
-class SFXController: ObservableObject {
-
-}
+//
 
 class HiSynthCore: ObservableObject, HasAudioEngine {
     let engine = AudioEngine()

@@ -1,2 +1,3 @@
+# cloc exclude directory
 
-cloc HiSynth.swiftpm
+cloc --exclude-dir=ThirdParty  HiSynth.swiftpm

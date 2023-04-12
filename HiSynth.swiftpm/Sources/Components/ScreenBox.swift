@@ -34,7 +34,7 @@ struct ScreenBox<Content: View>: View {
                 .border(.black, width: 1.0)
                 .frame(width: width, height: height)
             content()
-        }
+        }.frame(width: width, height: height)
 
     }
 }

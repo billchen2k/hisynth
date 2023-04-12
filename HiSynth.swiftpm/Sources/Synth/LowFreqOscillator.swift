@@ -37,8 +37,9 @@ class LowFreqOscillator {
     /// Sample rate of the LFO (Call back frequecny). Can only be updated during initialization.
     let sampleRate: Float
 
-    private var isStarted: Bool = false
-    private var currentPhase: Float = 0.0
+    public var currentPhase: Float = 0.0
+    public var isStarted: Bool = false
+    
     private var timer: DispatchSourceTimer?
     private var timerQueue = DispatchQueue(label: "io.billc.hisynth.lfo")
     private let timerSource: DispatchSourceTimer
@@ -47,7 +48,7 @@ class LowFreqOscillator {
          phaseOffset: Float = 0.0,
          depth: Float = 1.0,
          speed: Float = 1.0,
-         sampleRate: Float = 100.0,
+         sampleRate: Float = 60.0,
          callback: ((Float) -> Void)? = nil) {
         guard speed > 0 else {
             fatalError("LFO speed must be greater than 0")
@@ -88,7 +89,9 @@ class LowFreqOscillator {
         let content = waveform.getTable().content
         var phase = currentPhase + speed / sampleRate
         phase = phase - floor(phase)
-        let index = Int(phase * Float(content.count))
+        var offsetPhase = phase + phaseOffset
+        offsetPhase = offsetPhase - floor(offsetPhase)
+        let index = Int(offsetPhase * Float(content.count))
         let value = content[index]
         for callback in callbacks {
             callback(Float(value) * self.depth)
@@ -97,6 +100,9 @@ class LowFreqOscillator {
     }
 
     public func start() {
+//        if depth == 0 {
+//            return
+//        }
         isStarted = true
     }
 
@@ -106,6 +112,6 @@ class LowFreqOscillator {
 
     /// Reset the phase of the LFO.
     public func sync() {
-        currentPhase = phaseOffset
+        currentPhase = 0
     }
 }

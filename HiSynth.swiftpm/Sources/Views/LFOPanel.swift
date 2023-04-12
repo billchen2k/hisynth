@@ -7,6 +7,8 @@
 
 import Foundation
 import SwiftUI
+import SpriteKit
+import MetalKit
 
 struct LFOPanel: View {
 
@@ -24,27 +26,36 @@ struct LFOPanel: View {
         4.0 - Float(waveforms.firstIndex(of: controller.waveforms[managing])!)
     }
 
+    var scene: LFOScene
+
     let knobSize: CGFloat = 48.0
-    let switchWidth: CGFloat = 32.0
-    let switchHeight: CGFloat = 26.0
+    let switchWidth: CGFloat = 30.0
+    let switchHeight: CGFloat = 22.0
+
+    init(controller: LFOController) {
+        self.controller = controller
+        self.scene = LFOScene()
+        self.scene.lfo = controller.lfos[0]
+    }
 
     var body: some View {
         ControlPanelContainer(title: "Low Frequency Oscillator") {
             HStack(spacing: 8.0) {
                 GeometryReader { geo in
-                    VStack {
+                    VStack(alignment: .leading) {
                         ForEach(0..<lfoCount, id: \.self) { i in
                             LightButton(isOn: managing == i,
                                         width: 30.0,
-                                        height: 60.0,
-                                        title: "LFO \(i + 1)",
+                                        height: geo.size.height * 0.9 / CGFloat(lfoCount),
+                                        title: "LFO\(i + 1)",
                                         vertical: true) {
                                 managing = i
+                                scene.lfo = controller.lfos[managing]
                             }
                             if i < lfoCount - 1 { Spacer() }
                         }
-                    }.frame(height: geo.size.height * 0.85)
-                }.frame(width: 50.0)
+                    }
+                }.frame(width: 40.0)
 
                 GeometryReader {geo in
                     VStack {
@@ -75,7 +86,7 @@ struct LFOPanel: View {
                         Spacer()
                         Text("OSC \(managing + 1) Waveform").modifier(HSFont(.body2))
                     }
-                }.frame(width: 175.0)
+                }.frame(width: 110.0)
 
                 GeometryReader { geo in
                     VStack {
@@ -102,51 +113,79 @@ struct LFOPanel: View {
                                 HSKnob(value: $controller.phases[managing],
                                        range: 0.0...1.0,
                                        size: knobSize,
-                                       stepSize: 0.01,
+                                       stepSize: 0.05,
                                        allowPoweroff: false,
                                        ifShowValue: true,
                                        valueFormatter: { String(format: "%.1fπ", $0 * 2) })
                                 Text("Phase").modifier(HSFont(.body2))
                             }
                         }
+                        Spacer()
                         ScreenBox(isOn: false, blankStyle: false, width: geo.size.width * 0.9, height: geo.size.height * 0.35) {
+                            SpriteView(scene: scene, options: [.allowsTransparency],
+                                       debugOptions: [.showsFPS, .showsNodeCount])
+                            .padding(2.0)
                         }
-                        Text("Waveform Preview").modifier(HSFont(.body2))
+                        Text("Phase Preview").modifier(HSFont(.body2))
                     }
                 }.frame(width: 180.0)
+
                 VStack {
                     VStack(alignment: .leading) {
-                        HStack {
-                            ForEach(0..<lfoCount, id: \.self) { i in
-                                LightButton(isOn: controller.modPitch[i], width: switchWidth, height: switchHeight) {
-                                    controller.modPitch[i].toggle()
+                        Group {
+                            HStack {
+                                ForEach(0..<lfoCount, id: \.self) { i in
+                                    LightButton(isOn: controller.modPitch[i], width: switchWidth, height: switchHeight, title: "\(i + 1)") {
+                                        controller.modPitch[i].toggle()
+                                    }
                                 }
+                                Text("PITCH").modifier(HSFont(.body1))
                             }
-                            Text("PITCH").modifier(HSFont(.body1))
+                            Spacer()
+                            HStack {
+                                ForEach(0..<lfoCount, id: \.self) { i in
+                                    LightButton(isOn: controller.modAmplitude[i], width: switchWidth, height: switchHeight, title: "\(i + 1)") {
+                                        controller.modAmplitude[i].toggle()
+                                    }
+                                }
+                                Text("AMPLITUDE").modifier(HSFont(.body1))
+                            }
+                            Spacer()
+                            HStack {
+                                ForEach(0..<lfoCount, id: \.self) { i in
+                                    LightButton(isOn: controller.modFilterLow[i], width: switchWidth, height: switchHeight, title: "\(i + 1)") {
+                                        controller.modFilterLow[i].toggle()
+                                    }
+                                }
+                                Text("FILTER LOW").modifier(HSFont(.body1))
+                            }
+                            Spacer()
+                            HStack {
+                                ForEach(0..<lfoCount, id: \.self) { i in
+                                    LightButton(isOn: controller.modFilterHigh[i], width: switchWidth, height: switchHeight, title: "\(i + 1)") {
+                                        controller.modFilterHigh[i].toggle()
+                                    }
+                                }
+                                Text("FILTER HIGH").modifier(HSFont(.body1))
+                            }
+                            Spacer()
+                            HStack {
+                                ForEach(0..<lfoCount, id: \.self) { i in
+                                    LightButton(isOn: false, width: switchWidth, height: switchHeight, title: "\(i + 1)") {
+                                        controller.modFilterHigh[i] = false
+                                        controller.modFilterLow[i] = false
+                                        controller.modAmplitude[i] = false
+                                        controller.modPitch[i] = false
+                                    }
+                                }
+                                Text("OFF").modifier(HSFont(.body1))
+                            }
                         }
+                        Spacer()
                         HStack {
-                            ForEach(0..<lfoCount, id: \.self) { i in
-                                LightButton(isOn: controller.modAmplitude[i], width: switchWidth, height: switchHeight) {
-                                    controller.modAmplitude[i].toggle()
-                                }
-                            }
-                            Text("AMPLITUDE").modifier(HSFont(.body1))
-                        }
-                        HStack {
-                            ForEach(0..<lfoCount, id: \.self) { i in
-                                LightButton(isOn: controller.modFilterLow[i], width: switchWidth, height: switchHeight) {
-                                    controller.modFilterLow[i].toggle()
-                                }
-                            }
-                            Text("FILTER LOW").modifier(HSFont(.body1))
-                        }
-                        HStack {
-                            ForEach(0..<lfoCount, id: \.self) { i in
-                                LightButton(isOn: controller.modFilterHigh[i], width: switchWidth, height: switchHeight) {
-                                    controller.modFilterHigh[i].toggle()
-                                }
-                            }
-                            Text("FILTER HIGH").modifier(HSFont(.body1))
+                            Spacer()
+                            Text("Modulate Target").modifier(HSFont(.body2))
+                            Spacer()
                         }
                     }
                 }

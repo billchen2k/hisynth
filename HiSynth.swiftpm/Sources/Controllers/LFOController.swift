@@ -8,7 +8,7 @@
 import Foundation
 
 class LFOController: ObservableObject {
-    static let lfoCount: Int = 2
+    static let lfoCount: Int = 3
 
     var lfos: [LowFreqOscillator]
 
@@ -96,3 +96,4 @@ class LFOController: ObservableObject {
         }
     }
 }
+

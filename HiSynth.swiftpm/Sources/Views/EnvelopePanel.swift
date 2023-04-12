@@ -20,7 +20,7 @@ struct EnvelopePanel: View {
     }
 
     let sliderWidth: CGFloat = 50.0
-    let screenWidth: CGFloat = 300.0
+    let screenWidth: CGFloat = 250.0
 
     var body: some View {
         ControlPanelContainer(title: "Envelope Generator") {
@@ -48,7 +48,7 @@ struct EnvelopePanel: View {
                 }.frame(width: sliderWidth)
                 GeometryReader { geo in
                     VStack {
-                        HSSlider(value: $controller.releaseDuration, range: 0.01...10.0, stepSize: 0.005, height: geo.size.height * 0.85, allowPoweroff: false, log: true)
+                        HSSlider(value: $controller.releaseDuration, range: 0.05...10.0, stepSize: 0.005, height: geo.size.height * 0.85, allowPoweroff: false, log: true)
                         Spacer()
                         Text("Release").modifier(HSFont(.body2))
                     }
@@ -58,7 +58,6 @@ struct EnvelopePanel: View {
                         ScreenBox(isOn: false, width: geo.size.width, height: geo.size.height * 0.85) {
                             SpriteView(scene: scene,
                                        options: [.allowsTransparency])
-                            .padding(2.0)
                         }
                         Spacer()
                         Text("Envelope Preview").modifier(HSFont(.body2))

@@ -11,7 +11,7 @@ import Foundation
 /// Wraps multiple oscillators and envelopes for polyphonic synthesis.
 class PolyOscillator: HasKeyHandlar {
 
-    static let oscCount: Int = 12
+    static let oscCount: Int = 8
 
     var outputNode: Mixer = Mixer()
 

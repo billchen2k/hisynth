@@ -20,7 +20,6 @@ class ADSRScene: SKScene {
         backgroundColor = .clear
         scaleMode = .resizeFill
         size = view.frame.size
-        view.allowsTransparency = true
         createCurve()
     }
 
@@ -46,10 +45,10 @@ class ADSRScene: SKScene {
         let w: CGFloat = 2.0
 
         let attackPoint = CGPoint(x: a / scale + w, y: size.height - w)
-        let decayPoint = CGPoint(x: (a + d) / scale + w, y: s * size.height - w)
-        let releasePoint = CGPoint(x: (a + d + r) / scale + w, y: w)
+        let decayPoint = CGPoint(x: (a + d) / scale, y: s * size.height - w)
+        let releasePoint = CGPoint(x: (a + d + r) / scale, y: 0.0)
 
-        curvePath.move(to: CGPoint(x: w, y: w))
+        curvePath.move(to: CGPoint(x: w, y: 0.0))
         curvePath.addLine(to: attackPoint)
         curvePath.addLine(to: decayPoint)
         curvePath.addLine(to: releasePoint)

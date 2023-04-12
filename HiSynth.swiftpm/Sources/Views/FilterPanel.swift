@@ -13,7 +13,7 @@ struct FilterPanel: View {
 
     @ObservedObject var controller: FilterController
 
-    let sliderWidth: CGFloat = 60.0
+    let sliderWidth: CGFloat = 50.0
     let screenWidth: CGFloat = 300.0
 
     var scene: SKScene {
@@ -39,6 +39,7 @@ struct FilterPanel: View {
                         HSSlider(value: $controller.highPassRes, range: controller.filters.highPassFilter.$resonance.range, stepSize: 0.01, height: geo.size.height * 0.85, allowPoweroff: false)
                         Spacer()
                         Text("Resonance").modifier(HSFont(.body2))
+                            .fixedSize()
                     }
                 }.frame(width: sliderWidth)
 
@@ -49,15 +50,14 @@ struct FilterPanel: View {
                                        preferredFramesPerSecond: 60,
                                        options: [.allowsTransparency],
                                        debugOptions: [.showsFPS, .showsNodeCount])
-                            .padding(2.0)
                         }
                         Spacer()
                         HStack {
-                            Text("High Pass")
+                            Text("High Pass").padding(.leading, 10)
                             Spacer()
                             Text("EQ")
                             Spacer()
-                            Text("Low Pass")
+                            Text("Low Pass").padding(.trailing, 10)
                         }.modifier(HSFont(.body2))
                     }
                 }.frame(width: screenWidth)
@@ -74,6 +74,7 @@ struct FilterPanel: View {
                         HSSlider(value: $controller.lowPassRes, range: controller.filters.lowPassFilter.$resonance.range, stepSize: 0.01, height: geo.size.height * 0.85, allowPoweroff: false)
                         Spacer()
                         Text("Resonance").modifier(HSFont(.body2))
+                            .fixedSize()
                     }
                 }.frame(width: sliderWidth)
             }

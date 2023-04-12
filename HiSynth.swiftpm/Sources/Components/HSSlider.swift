@@ -106,7 +106,7 @@ struct HSSlider: View {
                     )
             }
         }.frame(width: width, height: height)
-        // Allow click @TODO
+//         Allow click @TODO
 //            .gesture(
 //                DragGesture(minimumDistance: 0)
 //                    .onEnded { v in
