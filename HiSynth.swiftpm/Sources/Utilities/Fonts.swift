@@ -101,8 +101,9 @@ struct HSFont: ViewModifier {
             content.font(.system(size: 14.0, weight: .regular))
                 .foregroundColor(Theme.colorTitleText)
         case .artTitle0:
-            content.font(.custom("Michroma", size: 48.0))
+            content.font(.custom("Michroma", size: 30.0))
                 .foregroundStyle(Theme.gradientArtTitle())
+                .opacity(0.8)
         case .artTitle1:
             content.font(.custom("Michroma", size: 24.0))
                 .foregroundColor(Theme.colorTitleText)

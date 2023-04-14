@@ -8,10 +8,11 @@
 import Foundation
 
 class Filters {
+
     var inputNode: Node
     var outputNode: Mixer = Mixer()
 
-    /// Using Apple Audio Unit's filters.
+    /// Using Apple Audio Unit's High Pass and Low Pass Filters
     var lowPassFilter: LowPassFilter
     var highPassFilter: HighPassFilter
 

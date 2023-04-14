@@ -8,7 +8,7 @@
 import Foundation
 import SpriteKit
 
-/// An ADSR scene to render envelope curve
+/// An ADSR scene to render the envelope curve
 class ADSRScene: SKScene {
 
     var env: AmplitudeEnvelope?
@@ -92,9 +92,5 @@ class ADSRScene: SKScene {
         textNode.verticalAlignmentMode = .top
         textNode.position = CGPoint(x: size.width - 5, y: size.height - 5)
         addChild(textNode)
-    }
-
-    func noteOn() {
-        // Add the gradient animation here
     }
 }

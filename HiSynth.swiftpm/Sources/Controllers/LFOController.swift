@@ -38,7 +38,6 @@ class LFOController: ObservableObject {
 
     @Published var modPitch: [Bool] {
         didSet {
-            print("modPitch changed \(modPitch)")
             pitchMod?.ifModulate = modPitch
         }
     }

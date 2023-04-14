@@ -20,7 +20,7 @@ struct EnvelopePanel: View {
     }
 
     let sliderWidth: CGFloat = 50.0
-    let screenWidth: CGFloat = 250.0
+    let screenWidth: CGFloat = 220.0
 
     var body: some View {
         ControlPanelContainer(title: "Envelope Generator") {

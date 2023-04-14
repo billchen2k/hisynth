@@ -54,7 +54,7 @@ struct LFOPanel: View {
                             }
                             if i < lfoCount - 1 { Spacer() }
                         }
-                    }
+                    }.frame(height: geo.size.height * 0.9)
                 }.frame(width: 40.0)
 
                 GeometryReader {geo in
@@ -129,10 +129,9 @@ struct LFOPanel: View {
                         Text("Phase Preview").modifier(HSFont(.body2))
                     }
                 }.frame(width: 180.0)
-
-                VStack {
-                    VStack(alignment: .leading) {
-                        Group {
+                GeometryReader { geo in
+                    VStack {
+                        VStack(alignment: .leading) {
                             HStack {
                                 ForEach(0..<lfoCount, id: \.self) { i in
                                     LightButton(isOn: controller.modPitch[i], width: switchWidth, height: switchHeight, title: "\(i + 1)") {
@@ -180,7 +179,7 @@ struct LFOPanel: View {
                                 }
                                 Text("OFF").modifier(HSFont(.body1))
                             }
-                        }
+                        }.frame(height: geo.size.height * 0.85)
                         Spacer()
                         HStack {
                             Spacer()
@@ -188,7 +187,8 @@ struct LFOPanel: View {
                             Spacer()
                         }
                     }
-                }
+                }.frame(width: 200.0)
+
             }
         }
     }

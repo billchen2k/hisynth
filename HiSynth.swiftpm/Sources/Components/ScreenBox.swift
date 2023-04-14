@@ -1,6 +1,6 @@
 //
 //  ScreenBox.swift
-//
+//  HiSynth
 //
 //  Created by Bill Chen on 2023/4/5.
 //

@@ -9,13 +9,13 @@ import Foundation
 
 
 /// Waveforms used in HSOscillator (for generating sound) and LowFreqOscillator (for modulating parameters).
-enum HSWaveform {
-    case sine
-    case square
-    case saw
-    case triangle
-    case pulse
-    case rsaw // Only used in LFOs
+enum HSWaveform: Int8, HSEnum {
+    case sine = 0
+    case square = 1
+    case saw = 2
+    case triangle = 3
+    case pulse = 4
+    case rsaw = 5// Only used in LFOs
 
     private func pulseWave(pulseSize: Float = 0.25) -> [Table.Element] {
         var table = [Table.Element](zeros: 4096)

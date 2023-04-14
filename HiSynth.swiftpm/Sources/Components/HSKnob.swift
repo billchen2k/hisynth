@@ -1,6 +1,6 @@
 //
 //  HSKnob.swift
-//
+//  HiSynth
 //
 //  Created by Bill Chen on 2023/4/4.
 //
@@ -10,8 +10,8 @@ import SwiftUI
 
 struct HSKnob: View {
     @Binding var value: Float
-    @State var isDragging = false
-    @State var oldValue: Float = 0
+    @State private var isDragging = false
+    @State private var oldValue: Float = 0
 
     var range: ClosedRange<Float> = 0...1
     var size: CGFloat = 80.0

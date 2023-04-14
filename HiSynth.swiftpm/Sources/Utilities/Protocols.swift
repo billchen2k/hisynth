@@ -21,3 +21,8 @@ protocol Modulatable {
     var modulatedValue: AUValue { get }
     mutating func modulate(_ value: Float)
 }
+
+protocol HSEnum {
+    var rawValue: Int8 { get }
+    func getReadableName() -> String
+}

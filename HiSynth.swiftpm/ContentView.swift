@@ -22,8 +22,8 @@ struct ContentView: View {
                         EnvelopePanel(controller: core.envelopeController)
                         FilterPanel(controller: core.filterController)
                         LFOPanel(controller: core.lfoController)
-                        OscillatorPanel(controller: core.oscillatorController)
-                        OscillatorPanel(controller: core.oscillatorController)
+                        AFXPanel(controller: core.afxController)
+                        PresetView(controller: core.presetController)
                     }.padding(4.0)
                 }
                 .frame(height: geometry.size.height / 2.0)
