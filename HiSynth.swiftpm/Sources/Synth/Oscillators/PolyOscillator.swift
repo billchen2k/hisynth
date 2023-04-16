@@ -145,7 +145,7 @@ class PolyOscillator: HasKeyHandlar {
                 }
             }
             // Release the oscillator after 0.3 seconds.
-            taskQueue.asyncAfter(deadline: .now() + Double(envPool[idx].releaseDuration) + 0.05, execute: task)
+            taskQueue.asyncAfter(deadline: .now() + Double(envPool[idx].releaseDuration) + 0.2, execute: task)
             noteTasks[pitch.midiNoteNumber] = task
         } else {
             print("Warning: noteOff called on a note that is not playing.")

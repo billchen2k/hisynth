@@ -57,6 +57,7 @@ class PresetController: ObservableObject {
             try preset.parse(presetStr)
             self.loadPreset(preset)
             self.presets.append(preset)
+            self.currentPreset = preset
             onCompletion(preset.name)
         } catch let error as PresetError {
             switch error {

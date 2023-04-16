@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-public struct Fonts {
+class Fonts {
 
     /// Register custom fonts inside Swift Packages without Info.plist.
     ///     Reference: https://jacobzivandesign.com/technology/custom-fonts-from-swift-package/

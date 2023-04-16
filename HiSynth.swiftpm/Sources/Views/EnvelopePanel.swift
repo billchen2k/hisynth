@@ -41,7 +41,7 @@ struct EnvelopePanel: View {
                 }.frame(width: sliderWidth)
                 GeometryReader { geo in
                     VStack {
-                        HSSlider(value: $controller.sustainLevel, range: 0.0...1.0, stepSize: 0.005, height: geo.size.height * 0.85, allowPoweroff: false)
+                        HSSlider(value: $controller.sustainLevel, range: 0.00...1.0, stepSize: 0.005, height: geo.size.height * 0.85, allowPoweroff: false)
                         Spacer()
                         Text("Sustain").modifier(HSFont(.body2))
                     }

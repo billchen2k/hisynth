@@ -40,15 +40,17 @@ class FilterScene: SKScene {
     var barNodes: [SKSpriteNode] = []
     var eqNode: SKShapeNode!
 
+    private var taskQueue = DispatchQueue(label: "io.billc.hisynth.fft", qos: .default)
+
     override func didMove(to view: SKView) {
         backgroundColor = .clear
         scaleMode = .resizeFill
         size = view.frame.size
-        self.tap = FFTTap(mixer, callbackQueue: .main) { fftData in
+        self.tap = FFTTap(mixer, callbackQueue: taskQueue) { fftData in
             // fftData is an array of size 2048
             self.fftData = fftData
         }
-        // Update amplitudes 
+        // Update amplitudes
         Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
             if let fftData = self.fftData {
                 self.updateAmplitudes(fftData)
@@ -194,8 +196,8 @@ class FilterScene: SKScene {
 
             let barHeight = CGFloat(averageAmplitude) * size.height
             bar.size = CGSize(width: bar.size.width, height: barHeight)
-//            let resizeAction = SKAction.resize(toWidth: bar.size.width, height: barHeight, duration: 0.05)
-//            bar.run(resizeAction)
+            //            let resizeAction = SKAction.resize(toWidth: bar.size.width, height: barHeight, duration: 0.05)
+            //            bar.run(resizeAction)
         }
     }
 

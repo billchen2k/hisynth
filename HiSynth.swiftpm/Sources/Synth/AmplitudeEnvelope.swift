@@ -85,7 +85,7 @@ public class AmplitudeEnvelope: Node, Gated {
     public func closeGate() {
         taskId &+= 1
         // Immediate Release
-        if releaseDuration <= 1e-3 {
+        if releaseDuration <= 0.05 || sustainLevel <= 0.05 {
             au.outputVolume = 0.0
             return
         }
@@ -93,7 +93,9 @@ public class AmplitudeEnvelope: Node, Gated {
         taskQueue.async {
             let releaseStep = self.sustainLevel / (self.releaseDuration * 1000)
             var currentLevel: AUValue = self.au.outputVolume
-
+            if currentLevel > self.sustainLevel {
+                currentLevel = self.sustainLevel
+            }
             // Release phase
             while currentLevel > 0.0 {
                 if self.taskId != currentTaskId {

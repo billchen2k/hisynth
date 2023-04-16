@@ -68,7 +68,7 @@ class AFXController: ObservableObject {
             updateReverbType()
         }
     }
-    @Published var reverbMix: Float = 50.0 {
+    @Published var reverbMix: Float = 0.5 {
         didSet {
             afx.reverb.dryWetMix = reverbMix
         }

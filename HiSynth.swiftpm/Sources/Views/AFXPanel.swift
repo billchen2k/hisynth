@@ -51,7 +51,7 @@ struct AFXPanel: View {
             }
             VStack {
                 HSKnob(value: $controller.reverbMix,
-                       range: 0.0...100.0, size: knobSize, stepSize: 1.0,
+                       range: 0.0...1.0, size: knobSize, stepSize: 0.01,
                        allowPoweroff: true)
                 .frame(width: itemWidth, height: itemHeight)
                 Text("Mix").modifier(HSFont(.body2))

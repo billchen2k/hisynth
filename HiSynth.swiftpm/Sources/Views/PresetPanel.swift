@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-struct PresetView: View {
+struct PresetPanel: View {
 
     @ObservedObject var controller: PresetController
 

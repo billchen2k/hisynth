@@ -32,6 +32,11 @@ struct Theme {
 
     static let fontBody = Font.system(size: 13.0)
 
+    /// Main gradient used in the app home background.
+    static func gradientMain() -> LinearGradient {
+        return LinearGradient(colors: [Color(hex: 0x4a4a4a), Color(hex: 0x000000)], startPoint: .top, endPoint: .bottom)
+    }
+
     /// Radial gradient for a light screen, used in selected waveforms.
     static func gradientLightScreen(_ radius: CGFloat = 200.0) -> RadialGradient {
         return RadialGradient(colors: [Color(hex: 0x003849), Color(hex: 0x000000)], center: .top, startRadius: 0, endRadius: radius)

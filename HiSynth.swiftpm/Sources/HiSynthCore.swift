@@ -15,7 +15,8 @@ class HiSynthCore: ObservableObject, HasAudioEngine {
     @Published var filterController: FilterController
     @Published var lfoController: LFOController
     @Published var afxController: AFXController
-    @Published var presetController: PresetController!
+    @Published var presetController: PresetController?
+    @Published var rackController: RackController
 
     init() {
         polyOscillators = [PolyOscillator(), PolyOscillator()]
@@ -37,21 +38,26 @@ class HiSynthCore: ObservableObject, HasAudioEngine {
         lfoController.filterHighMod = filterController.highPassModulator
         lfoController.pitchMod = oscillatorController.pitchModulator
         self.lfoController = lfoController
+
+        self.rackController =  RackController(sfxController.outputNode)
         self.presetController = PresetController(core: self)
+        self.rackController.core = self
     }
 
-    func noteOn(pitch: Pitch, point: CGPoint) {
+    func noteOn(pitch: Pitch, point: CGPoint = CGPoint(0, 0)) {
         print("Note on:", pitch.midiNoteNumber)
         // If it is the first note, sync the lfo.
         if oscillatorController.osc1.voices.count == 0 || oscillatorController.osc2.voices.count == 0 {
             lfoController.sync()
         }
         oscillatorController.noteOn(pitch)
+        rackController.noteHistoryManager.on(pitch)
     }
 
     func noteOff(pitch: Pitch) {
         print("Note off:", pitch.midiNoteNumber)
         oscillatorController.noteOff(pitch)
+        rackController.noteHistoryManager.off(pitch)
     }
 
     func start() {
@@ -63,6 +69,6 @@ class HiSynthCore: ObservableObject, HasAudioEngine {
         envelopeController.setup()
         filterController.setup()
         afxController.setup()
-        presetController.setup()
+        presetController?.setup()
     }
 }

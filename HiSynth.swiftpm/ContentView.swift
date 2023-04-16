@@ -4,7 +4,7 @@ import AVFoundation
 
 /// Welcome to **HiSynth**.
 ///
-/// It is recommended to play around with this synthesizer on an iPad.
+/// It is recommended to play around with HiSynth on an iPad.
 struct ContentView: View {
 
     @StateObject var core = HiSynthCore()
@@ -23,26 +23,20 @@ struct ContentView: View {
                         FilterPanel(controller: core.filterController)
                         LFOPanel(controller: core.lfoController)
                         AFXPanel(controller: core.afxController)
-                        PresetView(controller: core.presetController)
+                        PresetPanel(controller: core.presetController!)
                     }.padding(4.0)
                 }
                 .frame(height: geometry.size.height / 2.0)
-                // Status Bar
-                HStack{
-                    Spacer()
-                }.frame(height: 60)
-                    .background(Color(hex: 0x333333))
-                    .border(.black, width: 2)
+                RackView(controller: core.rackController)
                 VStack {
-                    KeyboardView(core: core)
+                    KeyboardView(core: core, rackController: core.rackController)
                 }
             }
-            .background(LinearGradient(gradient: Gradient(colors: [Color(hex: 0x4a4a4a), Color(hex: 0x000000)]),
-                                       startPoint: .top, endPoint: .bottom))
+            .background(Theme.gradientMain())
             .onAppear {
                 core.start()
             }
-        }
+        }.ignoresSafeArea(.keyboard)
     }
 }
 /// For preview with iPad Pro (11-inch) in landscape mode.
