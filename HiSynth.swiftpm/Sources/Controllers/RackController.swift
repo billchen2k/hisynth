@@ -7,18 +7,27 @@
 
 import Foundation
 
+struct Song {
+    var title: String
+    var composer: String?
+    var fileName: String
+}
+
 /// Handles displaying real-time waveform, piano roll of playing history, chose sound, and octave
 class RackController: ObservableObject {
 
-    @Published var octave: Int8 = 3
-    @Published var songs: [String] = []
-    @Published var selectedSongs: String = ""
+    @Published var octave: Int8 = 4
+    @Published var songs: [Song] = []
+    @Published var selectedSong: Song
+    @Published var tempo: Double = 120.0
+    @Published var position: Duration = Duration(beats: 0.0, tempo: 0.0)
     @Published var isPlaying: Bool = false {
         didSet {
             if isPlaying {
-                sequencer.stop()
-            } else {
                 sequencer.play()
+            } else {
+                sequencer.rewind()
+                sequencer.stop()
             }
         }
     }
@@ -41,12 +50,23 @@ class RackController: ObservableObject {
 
         let midiFiles = Bundle.main.paths(forResourcesOfType: "mid", inDirectory: nil)
             .map { URL(fileURLWithPath: $0).deletingPathExtension().lastPathComponent }
-        self.songs = midiFiles
+        let songs: [Song] = midiFiles.map {
+            // Song: composer - author
+            let composer = $0.split(separator: "-").first?.trimmingCharacters(in: .whitespacesAndNewlines)
+            let title = $0.split(separator: "-").last?.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard let composer = composer, let title = title, composer != title else {
+                return Song(title: $0, composer: nil, fileName: $0)
+            }
+            return Song(title: title, composer: composer, fileName: $0)
+        }
+        self.songs = songs
+        self.selectedSong = songs[1]
         self.setUpSequencer()
     }
 
     private func setUpSequencer() {
-        let instrument = MIDICallbackInstrument { status, note, velocity in
+        let instrument = MIDICallbackInstrument { [self] status, note, velocity in
+            print("Callback called \(status), \(note), \(velocity)")
             guard let midiStatus = MIDIStatusType.from(byte: status) else {
                 return
             }
@@ -63,15 +83,32 @@ class RackController: ObservableObject {
                 self.externalActivatedNotes.removeAll(where: { $0.midiNoteNumber == pitch.midiNoteNumber })
             }
         }
+
+        // Update progress every seconds
+        Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+            self.position = self.sequencer.currentRelativePosition
+        }
         self.instrument = instrument
     }
 
-    private func setSong(_ song: String) {
-        guard let instrument = instrument else {
+    public func setSong(_ song: Song, play: Bool = true) {
+        guard let instrument = self.instrument else {
             return
         }
-        sequencer.loadMIDIFile(song)
+        self.isPlaying = false
+        sequencer.removeTracks()
+        sequencer.rewind()
+        sequencer.loadMIDIFile(song.fileName)
+
         sequencer.setGlobalMIDIOutput(instrument.midiIn)
-        sequencer.play()
+        tempo = sequencer.tempo
+        self.selectedSong = song
+        self.sequencer.setLoopInfo(Duration(beats: 1.0, tempo: tempo), loopCount: 10)
+        print("Song loaded: \(song.title)")
+        if play {
+            Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false) { _ in
+                self.isPlaying = true
+            }
+        }
     }
 }

@@ -49,7 +49,7 @@ struct FilterPanel: View {
                             SpriteView(scene: scene,
                                        preferredFramesPerSecond: 60,
                                        options: [.allowsTransparency],
-                                       debugOptions: [.showsFPS, .showsNodeCount])
+                                       debugOptions: HiSynthApp.debug ? [.showsFPS, .showsNodeCount] : [])
                         }
                         Spacer()
                         HStack {

@@ -123,7 +123,7 @@ struct LFOPanel: View {
                         Spacer()
                         ScreenBox(isOn: false, blankStyle: false, width: geo.size.width * 0.9, height: geo.size.height * 0.35) {
                             SpriteView(scene: scene, options: [.allowsTransparency],
-                                       debugOptions: [.showsFPS, .showsNodeCount])
+                                       debugOptions: HiSynthApp.debug ? [.showsFPS, .showsNodeCount] : [])
                             .padding(2.0)
                         }
                         Text("Phase Preview").modifier(HSFont(.body2))

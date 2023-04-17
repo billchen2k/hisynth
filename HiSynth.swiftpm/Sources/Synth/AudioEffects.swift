@@ -19,16 +19,22 @@ class AudioEffects {
     /// Factory presets supported in HiSynth: small/medium/largeRoom + Plate
     var reverb: Reverb
 
+    /// Gurad the output level
+    var limiter: PeakLimiter
+
     init(_ input: Node) {
         self.inputNode = input
         let decimator = Decimator(input)
         let drive = Distortion(decimator)
         let delay = Delay(drive)
         let reverb = Reverb(delay)
+        let limiter = PeakLimiter(reverb)
+
         self.decimator = decimator
         self.drive = drive
         self.delay = delay
         self.reverb = reverb
-        self.outputNode = reverb
+        self.limiter = limiter
+        self.outputNode = limiter
     }
 }
