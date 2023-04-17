@@ -8,10 +8,12 @@
 import Foundation
 import SwiftUI
 import SpriteKit
+import AVFoundation
 
 struct RackView: View {
 
     @ObservedObject var controller: RackController
+    @EnvironmentObject var walkthrough: WalkthroughController
 
     @State private var showPlaylist: Bool = false
 
@@ -64,57 +66,60 @@ struct RackView: View {
                 .padding(2.0)
             }.padding(.leading, 7.5)
                 .padding(.trailing, 0.0)
+
+            walkthrough.walkthrough(for: .rack)
+                .padding(.leading, 7.5)
             
             Spacer()
             
             /// Song Player: **Only available on macOS. Since I cannot enable background music for iOS devices.**
-#if os(macOS) || targetEnvironment(macCatalyst)
-            HStack(spacing: -1) {
-                IconButton(icon: "music.note.list", action: {
-                    showPlaylist.toggle()
-                })
-                .popover(isPresented: $showPlaylist) {
-                    VStack {
-                        List(content: {
-                            Section(content: {
-                                ForEach(controller.songs, id: \.fileName) { song in
-                                    Button(action: {
-                                        controller.setSong(song)
-                                        showPlaylist = false
-                                    }, label: {
-                                        VStack(alignment: .leading) {
-                                            Text(song.title)
-                                            Text(song.composer ?? "").font(.caption)
-                                        }
-                                    })
-                                }
-                            }, footer: {
-                                Text("Song player is only available on macOS.").font(.caption)
-                            })
-                        }).frame(width: 300.0, height: 400.0)
-
-                    }
-                }
-                ScreenBox(isOn: false, blankStyle: false, width: 220.0, height: buttonSize) {
-                    HStack {
-                        VStack(alignment: .leading, spacing: -2.0) {
-                            Text(controller.selectedSong.title)
-                                .font(.system(size: 20.0, weight: .bold))
-                                .foregroundColor(Theme.colorBodyText)
-                            Text(controller.selectedSong.composer ?? "Now Playing").modifier(HSFont(.body2))
+            if HiSynthApp.backgroundMusciAllowed {
+                HStack(spacing: -1) {
+                    IconButton(icon: "music.note.list", action: {
+                        showPlaylist.toggle()
+                    })
+                    .popover(isPresented: $showPlaylist) {
+                        VStack {
+                            List(content: {
+                                Section(content: {
+                                    ForEach(controller.songs, id: \.fileName) { song in
+                                        Button(action: {
+                                            controller.setSong(song)
+                                            showPlaylist = false
+                                        }, label: {
+                                            VStack(alignment: .leading) {
+                                                Text(song.title)
+                                                Text(song.composer ?? "").font(.caption)
+                                            }
+                                        })
+                                    }
+                                }, footer: {
+                                    Text("Song player is only available on macOS.").font(.caption)
+                                })
+                            }).frame(width: 300.0, height: 400.0)
                         }
-                        Spacer()
-                    }.frame(width: 200.0).padding(0)
-                }
-                IconButton(icon: controller.isPlaying ? "stop.fill" : "play.fill", action: {
-                    controller.isPlaying.toggle()
-                })
-            }.padding(.leading, 7.5)
-                .padding(.trailing, 0.0)
-                .onAppear {
-                    controller.setSong(controller.songs[1], play: false)
-                }
-#endif
+                    }
+                    ScreenBox(isOn: false, blankStyle: false, width: 220.0, height: buttonSize) {
+                        HStack {
+                            VStack(alignment: .leading, spacing: -2.0) {
+                                Text(controller.selectedSong.title)
+                                    .font(.system(size: 20.0, weight: .bold))
+                                    .foregroundColor(Theme.colorBodyText)
+                                Text(controller.selectedSong.composer ?? "Now Playing").modifier(HSFont(.body2))
+                            }
+                            Spacer()
+                        }.frame(width: 200.0).padding(0)
+                    }
+                    IconButton(icon: controller.isPlaying ? "stop.fill" : "play.fill", action: {
+                        controller.isPlaying.toggle()
+                    })
+                }.padding(.leading, 7.5)
+                    .padding(.trailing, 0.0)
+                    .onAppear {
+                        controller.setSong(controller.songs[1], play: false)
+                    }
+            }
+
             /// Octave Control
             HStack(spacing: -1) {
                 IconButton(icon: "arrowtriangle.left.fill", action: {

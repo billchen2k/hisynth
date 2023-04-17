@@ -8,35 +8,46 @@ import AVFoundation
 struct ContentView: View {
 
     @StateObject var core = HiSynthCore()
+    @StateObject var walkthrough = WalkthroughController()
 
     init() {
         Fonts.registerAllFonts()
     }
 
     var body: some View {
-        GeometryReader { geometry in
-            VStack(spacing: 0) {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    LazyHGrid(rows: [GridItem(.adaptive(minimum: 180))]) {
-                        OscillatorPanel(controller: core.oscillatorController)
-                        EnvelopePanel(controller: core.envelopeController)
-                        FilterPanel(controller: core.filterController)
-                        LFOPanel(controller: core.lfoController)
-                        AFXPanel(controller: core.afxController)
-                        PresetPanel(controller: core.presetController!)
-                    }.padding(4.0)
+        ZStack {
+            GeometryReader { geometry in
+                VStack(spacing: 0) {
+                    ScrollViewReader { proxy in
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            LazyHGrid(rows: [GridItem(.adaptive(minimum: 180))]) {
+                                OscillatorPanel(controller: core.oscillatorController)
+                                EnvelopePanel(controller: core.envelopeController)
+                                FilterPanel(controller: core.filterController)
+                                LFOPanel(controller: core.lfoController)
+                                AFXPanel(controller: core.afxController)
+                                PresetPanel(controller: core.presetController!)
+                            }.padding(4.0)
+                        }.onChange(of: walkthrough.scrollTarget) { target in
+                            withAnimation {
+                                proxy.scrollTo(target)
+                            }
+                        }
+                    }
+                    .frame(height: geometry.size.height / 2.0)
+                    RackView(controller: core.rackController)
+                    VStack {
+                        KeyboardView(core: core, rackController: core.rackController)
+                    }
                 }
-                .frame(height: geometry.size.height / 2.0)
-                RackView(controller: core.rackController)
-                VStack {
-                    KeyboardView(core: core, rackController: core.rackController)
+                .background(Theme.gradientMain())
+                .onAppear {
+                    core.start()
                 }
             }
-            .background(Theme.gradientMain())
-            .onAppear {
-                core.start()
-            }
+            WelcomeView(isPresented: $walkthrough.presentWelcome)
         }.ignoresSafeArea(.keyboard)
+            .environmentObject(walkthrough)
     }
 }
 /// For preview with iPad Pro (11-inch) in landscape mode.
@@ -47,4 +58,5 @@ struct AppPreviewProvider: PreviewProvider {
             .previewDevice(PreviewDevice(rawValue: "iPad Pro (11-inch)"))
     }
 }
+
 

@@ -5,6 +5,7 @@ import AVFoundation
 struct HiSynthApp: App {
 
     static let debug = false
+    static var backgroundMusciAllowed = true
 
     init() {
 #if os(iOS)
@@ -15,6 +16,13 @@ struct HiSynthApp: App {
             try AVAudioSession.sharedInstance().setCategory(.playAndRecord,
                                                             options: [.defaultToSpeaker, .mixWithOthers])
             try AVAudioSession.sharedInstance().setActive(true)
+
+            // Check if background audio is allowed (Only allowed on macOS)
+            var midiIn = MIDIEndpointRef()
+            let status: OSStatus = MIDIDestinationCreateWithBlock(MIDI.sharedInstance.client, "midi test" as CFString, &midiIn) { _, _ in }
+            if status == kMIDINotPermitted {
+                HiSynthApp.backgroundMusciAllowed = false
+            }
         } catch let err {
             print(err)
         }

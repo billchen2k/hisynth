@@ -39,7 +39,7 @@ struct LFOPanel: View {
     }
 
     var body: some View {
-        ControlPanelContainer(title: "Low Frequency Oscillator") {
+        ControlPanelContainer(title: "Low Frequency Oscillator", component: .lfo) {
             HStack(spacing: 8.0) {
                 GeometryReader { geo in
                     VStack(alignment: .leading) {

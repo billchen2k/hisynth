@@ -23,7 +23,7 @@ struct OscillatorPanel: View {
     }
 
     var body: some View {
-        ControlPanelContainer(title: "Oscillator") {
+        ControlPanelContainer(title: "Oscillator", component: .osc) {
             HStack(spacing: 8.0) {
                 // OSC1 Selector
                 GeometryReader {geo in
@@ -130,13 +130,4 @@ struct OscillatorPanel: View {
         }
     }
 }
-
-//struct OscillatorPanel_Previews: PreviewProvider {
-//    static var previews: some View {
-//        OscillatorPanel().frame(width: 500, height: 220)
-//    }
-//}
-
-
-
 

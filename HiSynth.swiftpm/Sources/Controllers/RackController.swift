@@ -99,11 +99,11 @@ class RackController: ObservableObject {
         sequencer.removeTracks()
         sequencer.rewind()
         sequencer.loadMIDIFile(song.fileName)
-
         sequencer.setGlobalMIDIOutput(instrument.midiIn)
         tempo = sequencer.tempo
         self.selectedSong = song
-        self.sequencer.setLoopInfo(Duration(beats: 1.0, tempo: tempo), loopCount: 10)
+        self.sequencer.setLoopInfo(Duration(beats: 2.0, tempo: tempo), loopCount: 10)
+        self.sequencer.enableLooping()
         print("Song loaded: \(song.title)")
         if play {
             Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false) { _ in

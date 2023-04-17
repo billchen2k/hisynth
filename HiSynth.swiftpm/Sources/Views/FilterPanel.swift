@@ -24,7 +24,7 @@ struct FilterPanel: View {
     }
 
     var body: some View {
-        ControlPanelContainer(title: "Filters") {
+        ControlPanelContainer(title: "Filters", component: .filter) {
             HStack{
 
                 GeometryReader { geo in

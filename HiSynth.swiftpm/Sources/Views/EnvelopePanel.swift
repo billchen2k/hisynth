@@ -23,7 +23,7 @@ struct EnvelopePanel: View {
     let screenWidth: CGFloat = 220.0
 
     var body: some View {
-        ControlPanelContainer(title: "Envelope Generator") {
+        ControlPanelContainer(title: "Envelope Generator", component: .env) {
             HStack {
                 GeometryReader { geo in
                     VStack {

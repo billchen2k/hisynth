@@ -11,6 +11,7 @@ import SwiftUI
 struct PresetPanel: View {
 
     @ObservedObject var controller: PresetController
+    @EnvironmentObject var walkthrough: WalkthroughController
 
     @State private var showImport = false
     @State private var showImportSuccess = false
@@ -27,7 +28,7 @@ struct PresetPanel: View {
     let buttonSize: CGFloat = 30.0
 
     var body: some View {
-        ControlPanelContainer(title: "Presets") {
+        ControlPanelContainer(title: "Presets", component: .preset) {
             HStack {
                 GeometryReader { geo in
                     ScrollView(showsIndicators: true) {
@@ -71,6 +72,9 @@ struct PresetPanel: View {
                             .modifier(HSFont(.body1))
                         Text("Crafted with 💙 by Bill Chen.").modifier(HSFont(.body2))
                     }.frame(height: geo.size.height)
+                    .onTapGesture {
+                        walkthrough.presentWelcome = true
+                    }
                 }.frame(width: 260.0)
             }.padding(.bottom, 5.0)
         }

@@ -133,7 +133,7 @@ struct AFXPanel: View {
             }
         }
 
-        return ControlPanelContainer(title: "Audio Effects") {
+        return ControlPanelContainer(title: "Audio Effects", component: .afx) {
             HStack {
                 VStack(alignment: .leading) {
                     reverbControls

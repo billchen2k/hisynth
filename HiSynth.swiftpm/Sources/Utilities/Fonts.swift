@@ -36,6 +36,9 @@ class Fonts {
 
 enum HSFontType {
 
+    /// Walkthrough text fonts
+    case body0
+
     /// Main text fonts.
     case body1
 
@@ -78,9 +81,11 @@ struct HSFont: ViewModifier {
     @ViewBuilder
     func body(content: Content) -> some View {
         switch fontType {
+        case .body0:
+            content.font(.system(size: 15.0, weight: .regular))
+                .foregroundColor(Theme.colorBodyText)
         case .body1:
-            content
-                .font(.system(size: 13.0, weight: .regular))
+            content.font(.system(size: 13.0, weight: .regular))
                 .foregroundColor(Theme.colorBodyText)
         case .body2:
             content.font(.system(size: 11.0, weight: .regular))
@@ -92,7 +97,7 @@ struct HSFont: ViewModifier {
             content.font(.system(size: 9.0, weight: .regular, design: .monospaced))
                 .foregroundColor(Theme.colorBodyText)
         case .title1:
-            content.font(.system(size: 24.0, weight: .regular))
+            content.font(.system(size: 22.0, weight: .regular))
                 .foregroundColor(Theme.colorTitleText)
         case .title2:
             content.font(.system(size: 20.0, weight: .bold))
@@ -105,8 +110,10 @@ struct HSFont: ViewModifier {
                 .foregroundStyle(Theme.gradientArtTitle())
                 .opacity(0.8)
         case .artTitle1:
-            content.font(.custom("Michroma", size: 24.0))
+            content.font(.custom("Michroma", size: 22.0))
                 .foregroundColor(Theme.colorTitleText)
+                .foregroundStyle(Theme.gradientArtTitle())
+                .opacity(0.8)
         case .artTitle2:
             content.font(.custom("Michroma", size: 16.0))
                 .foregroundStyle(Theme.gradientArtTitle())
