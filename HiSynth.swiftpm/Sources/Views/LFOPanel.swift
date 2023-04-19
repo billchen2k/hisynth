@@ -14,8 +14,6 @@ struct LFOPanel: View {
 
     @ObservedObject var controller: LFOController
 
-    @State var managing: Int = 0
-
     let waveforms: [HSWaveform] = [.sine, .rsaw, .saw, .square, .pulse]
 
     var lfoCount: Int {
@@ -27,6 +25,9 @@ struct LFOPanel: View {
     }
 
     var scene: LFOScene
+    var managing: Int {
+        controller.managing
+    }
 
     let knobSize: CGFloat = 48.0
     let switchWidth: CGFloat = 30.0
@@ -35,7 +36,7 @@ struct LFOPanel: View {
     init(controller: LFOController) {
         self.controller = controller
         self.scene = LFOScene()
-        self.scene.lfo = controller.lfos[0]
+        self.scene.controller = controller
     }
 
     var body: some View {
@@ -49,8 +50,7 @@ struct LFOPanel: View {
                                         height: geo.size.height * 0.9 / CGFloat(lfoCount),
                                         title: "LFO\(i + 1)",
                                         vertical: true) {
-                                managing = i
-                                scene.lfo = controller.lfos[managing]
+                                controller.managing = i
                             }
                             if i < lfoCount - 1 { Spacer() }
                         }
@@ -122,7 +122,8 @@ struct LFOPanel: View {
                         }
                         Spacer()
                         ScreenBox(isOn: false, blankStyle: false, width: geo.size.width * 0.9, height: geo.size.height * 0.35) {
-                            SpriteView(scene: scene, options: [.allowsTransparency],
+                            SpriteView(scene: scene, preferredFramesPerSecond: HiSynthApp.sceneFPS,
+                                       options: [.allowsTransparency],
                                        debugOptions: HiSynthApp.debug ? [.showsFPS, .showsNodeCount] : [])
                             .padding(2.0)
                         }

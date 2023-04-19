@@ -31,6 +31,7 @@ class Modulator {
     /// Modulation offsets. Will be summed before applying to the modulate target.
     private var modOffsets: [Float] = []
     private var lfoHandlers: [LFOHandler] = []
+    private var modLock = NSLock()
 
     init(target: Modulatable,
          range: ClosedRange<Float> = 0...1,
@@ -57,7 +58,9 @@ class Modulator {
                 if log {
                     modOffset = pow(10, log10(target.baseValue) + modOffset) - target.baseValue
                 }
-                self.modOffsets[i] = modOffset
+                modLock.lock()
+                modOffsets[i] = modOffset
+                modLock.unlock()
                 var offset: Float = 0
                 for i in 0..<self.lfos.count {
                     if ifModulate[i] {

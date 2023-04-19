@@ -51,7 +51,9 @@ struct RackView: View {
         HStack(spacing: 0.0) {
             /// Oscilloscope
             ScreenBox(isOn: false, blankStyle: false, width: 180.0, height: buttonSize) {
-                SpriteView(scene: oscilloscopeScene, options: [.allowsTransparency],
+                SpriteView(scene: oscilloscopeScene,
+                           preferredFramesPerSecond: HiSynthApp.sceneFPS,
+                           options: [.allowsTransparency],
                            debugOptions: HiSynthApp.debug ? [.showsFPS, .showsNodeCount] : [])
                 .padding(2.0)
             }.padding(.leading, 7.5)
@@ -60,7 +62,7 @@ struct RackView: View {
             /// Piano Roll
             ScreenBox(isOn: false, blankStyle: false, width: 220.0, height: buttonSize) {
                 SpriteView(scene: pianoRollScene,
-                           preferredFramesPerSecond: 30,
+                           preferredFramesPerSecond: HiSynthApp.sceneFPS,
                            options: [.allowsTransparency],
                            debugOptions: HiSynthApp.debug ? [.showsFPS, .showsNodeCount] : [])
                 .padding(2.0)
@@ -88,7 +90,7 @@ struct RackView: View {
                                             showPlaylist = false
                                         }, label: {
                                             VStack(alignment: .leading) {
-                                                Text(song.title)
+                                                Text(song.title).fixedSize()
                                                 Text(song.composer ?? "").font(.caption)
                                             }
                                         })
@@ -105,6 +107,7 @@ struct RackView: View {
                                 Text(controller.selectedSong.title)
                                     .font(.system(size: 20.0, weight: .bold))
                                     .foregroundColor(Theme.colorBodyText)
+                                    .fixedSize()
                                 Text(controller.selectedSong.composer ?? "Now Playing").modifier(HSFont(.body2))
                             }
                             Spacer()
@@ -116,7 +119,7 @@ struct RackView: View {
                 }.padding(.leading, 7.5)
                     .padding(.trailing, 0.0)
                     .onAppear {
-                        controller.setSong(controller.songs[1], play: false)
+                        controller.setSong(controller.songs[0], play: false)
                     }
             }
 
@@ -144,7 +147,7 @@ struct RackView: View {
 
     private func handleOctaveChange(_ offset: Int8) {
         let newOctave: Int8 = controller.octave + offset
-        controller.octave = newOctave.clamped(to: 1...8)
+        controller.octave = newOctave.clamped(to: 1...7)
     }
 }
 

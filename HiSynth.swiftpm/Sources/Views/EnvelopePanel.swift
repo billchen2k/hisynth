@@ -57,6 +57,7 @@ struct EnvelopePanel: View {
                     VStack {
                         ScreenBox(isOn: false, width: geo.size.width, height: geo.size.height * 0.85) {
                             SpriteView(scene: scene,
+                                       preferredFramesPerSecond: HiSynthApp.sceneFPS,
                                        options: [.allowsTransparency])
                         }
                         Spacer()
@@ -70,8 +71,3 @@ struct EnvelopePanel: View {
     }
 }
 
-//struct EnvelopePanel_Previews: PreviewProvider {
-//    static var previews: some View {
-//        EnvelopePanel()
-//    }
-//}

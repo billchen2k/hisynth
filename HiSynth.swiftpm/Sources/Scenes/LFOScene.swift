@@ -11,11 +11,11 @@ import SpriteKit
 
 class LFOScene: SKScene {
 
+
+
+    var controller: LFOController!
     var lfo: LowFreqOscillator? {
-        didSet {
-            createCurve()
-            createPhasePos()
-        }
+        controller.lfos[controller.managing]
     }
 
     var curveNode: SKShapeNode?
@@ -82,7 +82,7 @@ class LFOScene: SKScene {
     }
 
     func createPhasePos() {
-        guard let lfo = lfo else {
+        guard lfo != nil else {
             return
         }
         phasePosNode?.removeFromParent()

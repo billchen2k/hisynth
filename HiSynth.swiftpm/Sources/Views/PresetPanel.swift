@@ -37,7 +37,11 @@ struct PresetPanel: View {
                                 ScreenBox(isOn: preset == controller.currentPreset,
                                           blankStyle: false,
                                           width: geo.size.width, height: 28.0) {
-                                    Text("\(preset.name)").modifier(HSFont(.body1))
+                                    HStack{
+                                        Text("\(preset.name)").modifier(HSFont(.body1))
+                                        Spacer()
+                                    }.padding(10.0)
+
                                 }
                                           .onTapGesture {
                                               controller.currentPreset = preset
@@ -105,13 +109,13 @@ struct PresetPanel: View {
             Text("Fail to import preset: \(importErrorMsg)")
         })
         .alert("Export Preset", isPresented: $showExport, actions: {
-            TextField("Preset String", text: $exportPresetName)
+            TextField("Name (1 - 24 Characters)", text: $exportPresetName)
             Button("Export", action: {
-                if exportPresetName.count > 0 && exportPresetStr.count <= 24 {
+                if exportPresetName.count > 0 && exportPresetName.count <= 24 {
                     exportPresetStr = controller.dumpCurrent(name: exportPresetName)
+                    showExport = false
+                    showExportSuccess = true
                 }
-                showExport = false
-                showExportSuccess = true
             })
             Button("Cancel", role: .cancel, action: {})
         }, message: {

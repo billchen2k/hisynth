@@ -12,6 +12,8 @@ class LFOController: ObservableObject {
 
     var lfos: [LowFreqOscillator]
 
+    @Published var managing: Int = 0
+
     @Published var waveforms: [HSWaveform] {
         didSet {
             lfos.enumerated().forEach { $1.waveform = waveforms[$0] }

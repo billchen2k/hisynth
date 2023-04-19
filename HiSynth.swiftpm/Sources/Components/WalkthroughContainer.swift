@@ -49,7 +49,9 @@ struct WalkthroughContainer: View {
                             .padding(.bottom, 8.0)
                     }
                     if let content = content {
-                        Text(content).modifier(HSFont(.body0))
+                        Text(try! AttributedString(markdown: content.replacingOccurrences(of: "-", with: "•"),
+                                                   options: AttributedString.MarkdownParsingOptions(interpretedSyntax: .inlineOnlyPreservingWhitespace)))
+                            .modifier(HSFont(.body0))
                     }
                     if let extras = extras {
                         extras

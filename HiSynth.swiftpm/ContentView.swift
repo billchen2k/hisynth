@@ -4,7 +4,7 @@ import AVFoundation
 
 /// Welcome to **HiSynth**.
 ///
-/// It is recommended to play around with HiSynth on an iPad.
+/// It is recommended to play around with HiSynth on an iPad device.
 struct ContentView: View {
 
     @StateObject var core = HiSynthCore()

@@ -6,12 +6,13 @@ struct HiSynthApp: App {
 
     static let debug = false
     static var backgroundMusciAllowed = true
+    static let sceneFPS = 30
 
     init() {
 #if os(iOS)
         do {
-            // Set buffer size to 256 samples on iOS devices.
-            Settings.bufferLength = .medium
+            // Increase the buffer size.
+            Settings.bufferLength = .long
             try AVAudioSession.sharedInstance().setPreferredIOBufferDuration(Settings.bufferLength.duration)
             try AVAudioSession.sharedInstance().setCategory(.playAndRecord,
                                                             options: [.defaultToSpeaker, .mixWithOthers])

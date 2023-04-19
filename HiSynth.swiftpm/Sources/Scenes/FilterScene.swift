@@ -36,7 +36,7 @@ class FilterScene: SKScene {
         controller.filters.lowPassFilter.$resonance.value
     }
 
-    let numberOfBars: Int = 128
+    let numberOfBars: Int = 100
     var barNodes: [SKSpriteNode] = []
     var eqNode: SKShapeNode!
 
@@ -50,8 +50,8 @@ class FilterScene: SKScene {
             // fftData is an array of size 2048
             self.fftData = fftData
         }
-        // Update amplitudes
-        Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
+        // Update amplitudes (Very CPU comsuming)
+        Timer.scheduledTimer(withTimeInterval: 0.15, repeats: true) { _ in
             if let fftData = self.fftData {
                 self.updateAmplitudes(fftData)
             }

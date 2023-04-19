@@ -43,12 +43,13 @@ class LowFreqOscillator {
     private var timer: DispatchSourceTimer?
     private var timerQueue = DispatchQueue(label: "io.billc.hisynth.lfo")
     private let timerSource: DispatchSourceTimer
+    private let lfoLock = NSLock()
 
     init(waveform: HSWaveform = .sine,
          phaseOffset: Float = 0.0,
          depth: Float = 1.0,
          speed: Float = 1.0,
-         sampleRate: Float = 60.0,
+         sampleRate: Float = 50.0,
          callback: ((Float) -> Void)? = nil) {
         guard speed > 0 else {
             fatalError("LFO speed must be greater than 0")
@@ -81,9 +82,11 @@ class LowFreqOscillator {
 
     private func update() {
         if !isStarted {
+            self.lfoLock.lock()
             for callback in callbacks {
                 callback(0.0)
             }
+            self.lfoLock.unlock()
             return
         }
         let content = waveform.getTable().content
@@ -93,9 +96,11 @@ class LowFreqOscillator {
         offsetPhase = offsetPhase - floor(offsetPhase)
         let index = Int(offsetPhase * Float(content.count))
         let value = content[index]
+        self.lfoLock.lock()
         for callback in callbacks {
             callback(Float(value) * self.depth)
         }
+        self.lfoLock.unlock()
         currentPhase = phase
     }
 

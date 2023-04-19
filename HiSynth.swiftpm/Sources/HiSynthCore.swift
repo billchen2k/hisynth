@@ -47,9 +47,9 @@ class HiSynthCore: ObservableObject, HasAudioEngine {
     func noteOn(pitch: Pitch, point: CGPoint = CGPoint(0, 0)) {
         print("Note on:", pitch.midiNoteNumber)
         // If it is the first note, sync the lfo.
-        if oscillatorController.osc1.voices.count == 0 || oscillatorController.osc2.voices.count == 0 {
+//        if oscillatorController.osc1.voices.count == 0 || oscillatorController.osc2.voices.count == 0 {
             lfoController.sync()
-        }
+//        }
         oscillatorController.noteOn(pitch)
         rackController.noteHistoryManager.on(pitch)
     }

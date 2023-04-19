@@ -47,7 +47,7 @@ struct FilterPanel: View {
                     VStack {
                         ScreenBox(isOn: false, width: geo.size.width, height: geo.size.height * 0.85) {
                             SpriteView(scene: scene,
-                                       preferredFramesPerSecond: 60,
+                                       preferredFramesPerSecond: HiSynthApp.sceneFPS,
                                        options: [.allowsTransparency],
                                        debugOptions: HiSynthApp.debug ? [.showsFPS, .showsNodeCount] : [])
                         }

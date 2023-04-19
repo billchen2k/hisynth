@@ -50,7 +50,7 @@ class RackController: ObservableObject {
 
         let midiFiles = Bundle.main.paths(forResourcesOfType: "mid", inDirectory: nil)
             .map { URL(fileURLWithPath: $0).deletingPathExtension().lastPathComponent }
-        let songs: [Song] = midiFiles.map {
+        var songs: [Song] = midiFiles.map {
             // Song: composer - author
             let composer = $0.split(separator: "-").first?.trimmingCharacters(in: .whitespacesAndNewlines)
             let title = $0.split(separator: "-").last?.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -59,6 +59,7 @@ class RackController: ObservableObject {
             }
             return Song(title: title, composer: composer, fileName: $0)
         }
+        songs.sort(by: { $0.title < $1.title })
         self.songs = songs
         self.selectedSong = songs[1]
         self.setUpSequencer()
