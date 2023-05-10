@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import AudioKit
+import Keyboard
 
 protocol HasKeyHandlar {
     func noteOn(_ pitch: Pitch)

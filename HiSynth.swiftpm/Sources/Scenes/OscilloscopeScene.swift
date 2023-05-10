@@ -7,6 +7,7 @@
 
 import Foundation
 import SpriteKit
+import AudioKit
 
 class OscilloscopeScene: SKScene {
     var controller: RackController!

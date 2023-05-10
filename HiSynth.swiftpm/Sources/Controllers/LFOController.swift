@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import AudioKit
 
 class LFOController: ObservableObject {
     static let lfoCount: Int = 3

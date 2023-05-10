@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import AudioKit
 
 
 /// Waveforms used in HSOscillator (for generating sound) and LowFreqOscillator (for modulating parameters).

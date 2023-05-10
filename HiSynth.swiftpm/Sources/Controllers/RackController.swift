@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import Tonic
+import AudioKit
 
 struct Song {
     var title: String
@@ -97,7 +99,6 @@ class RackController: ObservableObject {
             return
         }
         self.isPlaying = false
-        sequencer.removeTracks()
         sequencer.rewind()
         sequencer.loadMIDIFile(song.fileName)
         sequencer.setGlobalMIDIOutput(instrument.midiIn)

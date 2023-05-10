@@ -5,6 +5,8 @@
 //  Created by Bill Chen on 2023/4/3.
 //
 import Foundation
+import AudioKit
+import Tonic
 
 class HiSynthCore: ObservableObject, HasAudioEngine {
     let engine = AudioEngine()

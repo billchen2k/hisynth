@@ -7,7 +7,7 @@
 
 import Foundation
 import AVFoundation
-
+import AudioKit
 
 class FilterController: ObservableObject, HasModulatorConnector {
 
@@ -65,7 +65,7 @@ class FilterController: ObservableObject, HasModulatorConnector {
 
     func connectModulator(lfos: [LowFreqOscillator]) {
         let amplitude = ModulatableCustomParam(0.5) { v in
-            self.outputNode.volume = (0.5 + v).clamped(to: 0.0...1.0)
+            self.outputNode.volume = (0.5 + v).clamp(to: 0.0...1.0)
         }
         let amplitudeMod = Modulator(target: amplitude, range: -0.5...0.5, lfos: lfos)
         let lowMod = Modulator(target: $lowPassCutoff,

@@ -8,6 +8,9 @@
 import Foundation
 import CoreAudio
 import AVFoundation
+import AudioKit
+
+let twoPi = 2 * Float.pi
 
 /// This Oscillator is used as HiSynth's sound source.
 /// It is adapted from AudioKit's `PlaygroundOscillator`.

@@ -7,6 +7,8 @@
 
 import AVFoundation
 import Foundation
+import AudioKit
+import Tonic
 
 /// Wraps multiple oscillators and envelopes for polyphonic synthesis.
 class PolyOscillator: HasKeyHandlar {

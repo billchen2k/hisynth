@@ -8,6 +8,7 @@
 import Foundation
 import AVFoundation
 import SpriteKit
+import AudioKit
 
 public class AmplitudeEnvelope: Node, Gated {
 

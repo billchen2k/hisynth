@@ -35,9 +35,17 @@ let package = Package(
             appCategory: .music
         )
     ],
+    dependencies: [
+        .package(url: "https://github.com/AudioKit/Keyboard.git", "1.0.0"..<"2.0.0"),
+        .package(url: "https://github.com/AudioKit/AudioKit.git", "5.0.0"..<"6.0.0")
+    ],
     targets: [
         .executableTarget(
             name: "AppModule",
+            dependencies: [
+                .product(name: "Keyboard", package: "keyboard"),
+                .product(name: "AudioKit", package: "audiokit")
+            ],
             path: ".",
             resources: [
                 .process("Resources")

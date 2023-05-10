@@ -7,6 +7,7 @@
 
 import Foundation
 import AVFoundation
+import AudioKit
 
 enum HSReverbType: Int8, HSEnum {
     case plate = 0
@@ -31,7 +32,11 @@ class AFXController: ObservableObject {
 
     @Published var decimatorOn: Bool = false {
         didSet {
-            afx.decimator.bypassed = !decimatorOn
+            if decimatorOn {
+                afx.decimator.play()
+            } else {
+                afx.decimator.bypass()
+            }
         }
     }
     // Percent, 0 - 100
@@ -78,7 +83,11 @@ class AFXController: ObservableObject {
 
     @Published var driveOn: Bool = false {
         didSet {
-            afx.drive.bypassed = !driveOn
+            if driveOn {
+                self.afx.drive.play()
+            } else {
+                self.afx.drive.bypass()
+            }
         }
     }
     @Published var driveGain: Float = 0.0 {
@@ -96,7 +105,11 @@ class AFXController: ObservableObject {
 
     @Published var delayOn: Bool = false {
         didSet {
-            afx.delay.bypassed = !delayOn
+            if delayOn {
+                self.afx.delay.play()
+            } else {
+                self.afx.delay.bypass()
+            }
         }
     }
     // Seconds

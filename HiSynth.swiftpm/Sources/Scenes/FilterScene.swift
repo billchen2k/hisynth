@@ -8,6 +8,7 @@
 import Foundation
 import SpriteKit
 import AVFoundation
+import AudioKit
 
 class FilterScene: SKScene {
     var controller: FilterController!
@@ -82,7 +83,7 @@ class FilterScene: SKScene {
 
             // Scale the resulting data
             var scaledAmplitude = (amplitude + 250) / 229.8
-            scaledAmplitude = scaledAmplitude.clamped(to: 0...1)
+            scaledAmplitude = scaledAmplitude.clamp(to: 0...1)
             scaledAmplitude = (scaledAmplitude - 0.3) / 0.6
 
             DispatchQueue.main.async {

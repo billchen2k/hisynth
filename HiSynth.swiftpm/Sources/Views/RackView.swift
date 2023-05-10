@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import SpriteKit
 import AVFoundation
+import AudioKit
 
 struct RackView: View {
 
@@ -119,7 +120,7 @@ struct RackView: View {
                 }.padding(.leading, 7.5)
                     .padding(.trailing, 0.0)
                     .onAppear {
-                        controller.setSong(controller.songs[0], play: false)
+                        controller.setSong(controller.songs[0], play: true)
                     }
             }
 
@@ -147,7 +148,7 @@ struct RackView: View {
 
     private func handleOctaveChange(_ offset: Int8) {
         let newOctave: Int8 = controller.octave + offset
-        controller.octave = newOctave.clamped(to: 1...7)
+        controller.octave = newOctave.clamp(to: 1...7)
     }
 }
 

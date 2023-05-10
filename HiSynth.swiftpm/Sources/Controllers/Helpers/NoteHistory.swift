@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Tonic
 
 struct NoteHistory {
     var pitch: Pitch = Pitch(0)

@@ -63,3 +63,10 @@ extension String {
     }
 
 }
+
+extension Comparable {
+
+    @inlinable func clamp(to: ClosedRange<Self>) -> Self {
+        return min(max(self, to.lowerBound), to.upperBound)
+    }
+}

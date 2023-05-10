@@ -7,6 +7,7 @@
 
 import Foundation
 import AVFoundation
+import Tonic
 
 class OscillatorController: ObservableObject, HasKeyHandlar, HasModulatorConnector {
 

@@ -8,6 +8,7 @@
 import Foundation
 import AVFoundation
 import Combine
+import AudioKit
 
 class Modulator {
     /// Allow multiple LFOs
